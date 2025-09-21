@@ -1,0 +1,7 @@
+@import "tailwindcss" prefix(rsu);
+
+@layer rsu {
+	.rsu * {
+		all: revert;
+	}
+}

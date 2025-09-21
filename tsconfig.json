@@ -3,6 +3,7 @@
 		"target": "ES2016",
 		"jsx": "react-jsx",
 		"module": "ESNext",
+		"moduleResolution": "bundler",
 		"declaration": true,
 		"emitDeclarationOnly": true,
 		"outDir": "dist",
@@ -13,5 +14,7 @@
 		"strict": true,
 		"skipLibCheck": true
 	},
-	"include": ["src/**/*"]
+	"include": [
+		"src/**/*"
+	]
 }
