@@ -18,7 +18,7 @@ export default defineConfig({
 	],
 	build: {
 		lib: {
-			entry: ",/src/index.tsx",
+			entry: "./src/index.ts",
 			name: "ReactSpreadsheetUpload",
 			fileName: (format) => `rsu.${format}.js`,
 			formats: ["es", "cjs", "umd"],

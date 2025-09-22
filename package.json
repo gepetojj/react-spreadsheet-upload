@@ -4,7 +4,7 @@
 	"description": "Simple React component to upload spreadsheets",
 	"author": "João Pedro <contato.gepetojj@gmail.com>",
 	"license": "MIT",
-	"main": "dist/index.jsx",
+	"main": "dist/rsu.umd.js",
 	"keywords": [
 		"react",
 		"spreadsheet",
@@ -37,7 +37,7 @@
 	},
 	"packageManager": "pnpm@10.16.1",
 	"scripts": {
-		"build": "tsx && pnpm build:css && vite build",
+		"build": "tsc && vite build && pnpm build:css",
 		"build:css": "pnpx @tailwindcss/cli -m -i ./src/tw.css -o ./dist/styles.css",
 		"ci": "pnpm build && pnpm check-exports",
 		"lint": "biome lint --write .",
@@ -53,9 +53,14 @@
 		"build-storybook": "concurrently \"pnpm build-storybook:css\" \"storybook build\"",
 		"build-storybook:css": "pnpx @tailwindcss/cli -m -i ./src/tw.css -o ./dist/styles.css"
 	},
+	"dependencies": {
+		"clsx": "2.1.1",
+		"papaparse": "5.5.3",
+		"xlsx": "0.18.5"
+	},
 	"peerDependencies": {
-		"react": "^19.1.1",
-		"react-dom": "^19.1.1"
+		"react": "^18",
+		"react-dom": "^18"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.1.4",
@@ -88,10 +93,5 @@
 		"commitizen": {
 			"path": "./node_modules/cz-conventional-changelog"
 		}
-	},
-	"dependencies": {
-		"clsx": "^2.1.1",
-		"papaparse": "^5.5.3",
-		"xlsx": "^0.18.5"
 	}
 }
