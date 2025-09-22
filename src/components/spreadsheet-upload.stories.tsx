@@ -153,6 +153,15 @@ export const EnglishLocale: Story = {
 	},
 };
 
+export const SpanishLocale: Story = {
+	args: {
+		...Default.args,
+		i18n: {
+			locale: "es-ES",
+		},
+	},
+};
+
 export const LargeFileUpload: Story = {
 	args: {
 		...Default.args,

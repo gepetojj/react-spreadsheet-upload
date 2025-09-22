@@ -237,8 +237,9 @@ export function Validation({
 						) : (
 							<div className="rsu:text-red-700 rsu:text-sm">
 								<p>
-									{validationResult.errors.length} erros
-									encontrados
+									{t("validation.errorsFound", {
+										count: validationResult.errors.length,
+									})}
 								</p>
 							</div>
 						)}
@@ -365,8 +366,9 @@ export function Validation({
 						) : (
 							<div className="rsu:text-sm rsu:text-yellow-700">
 								<p>
-									{validationResult.warnings.length} avisos
-									encontrados
+									{t("validation.warningsFound", {
+										count: validationResult.warnings.length,
+									})}
 								</p>
 							</div>
 						)}
@@ -393,10 +395,10 @@ export function Validation({
 							</svg>
 						</div>
 						<p className="rsu:font-medium rsu:text-gray-900 rsu:text-lg">
-							Dados validados com sucesso!
+							{t("validation.successMessage")}
 						</p>
 						<p className="rsu:text-gray-500 rsu:text-sm">
-							Nenhum erro ou aviso encontrado
+							{t("validation.noIssuesFound")}
 						</p>
 					</div>
 				)}

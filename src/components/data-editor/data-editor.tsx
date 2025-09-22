@@ -347,7 +347,7 @@ export function DataEditor({
 				</div>
 				{editable && rowFilter === "all" && (
 					<div className="rsu:text-gray-500 rsu:text-sm">
-						Clique em uma célula para editar
+						{t("editor.clickToEdit")}
 					</div>
 				)}
 			</div>
@@ -498,8 +498,15 @@ export function DataEditor({
 				<div className="rsu:text-center rsu:text-gray-500 rsu:text-sm">
 					<p>
 						{rowFilter === "errorsOnly"
-							? `Exibindo ${displayData.rows.length} linha(s) com erro de ${errorRowCount} total(is)`
-							: `Exibindo ${maxRows} de ${data.totalRows} linhas e ${maxColumns} de ${data.totalColumns} colunas`}
+							? t("editor.displayingErrors", {
+									count: displayData.rows.length,
+									total: errorRowCount,
+							  })
+							: t("editor.displayingRows", {
+									shown: maxRows,
+									total: data.totalRows,
+									columns: maxColumns,
+							  })}
 					</p>
 				</div>
 			)}
@@ -507,11 +514,13 @@ export function DataEditor({
 			{editingCell && (
 				<div className="rsu:flex rsu:items-center rsu:space-x-2 rsu:text-gray-600 rsu:text-sm">
 					<span>
-						Editando linha {editingCell.row + 1}, coluna{" "}
-						{editingCell.column + 1}
+						{t("editor.editingCell", {
+							row: editingCell.row + 1,
+							column: editingCell.column + 1,
+						})}
 					</span>
 					<span>•</span>
-					<span>Pressione Enter para salvar, Esc para cancelar</span>
+					<span>{t("editor.keyboardHelp")}</span>
 				</div>
 			)}
 		</div>

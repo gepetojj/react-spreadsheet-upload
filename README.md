@@ -347,12 +347,21 @@ Adicione novos idiomas:
 ```tsx
 import { messages } from "react-spreadsheet-upload";
 
+// O espanhol (es-ES) já está incluído por padrão
+<SpreadsheetUpload
+	i18n={{ locale: "es-ES" }}
+	// ... outras props
+/>;
+
+// Ou personalize mensagens específicas:
+import { messages } from "react-spreadsheet-upload";
+
 const customMessages = {
 	...messages,
 	"es-ES": {
-		"upload.title": "Subida de Hoja de Cálculo",
-		"upload.dragAndDrop": "Arrastra y suelta tu archivo aquí",
-		// ... mais traduções
+		...messages["es-ES"],
+		"upload.title": "Mi Título Personalizado",
+		// ... outras personalizações
 	},
 };
 ```

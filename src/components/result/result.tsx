@@ -61,7 +61,7 @@ export function Result({
 					fill="none"
 					stroke="currentColor"
 					viewBox="0 0 24 24"
-					aria-label="Success"
+					aria-label={t("result.successAriaLabel")}
 				>
 					<title>Success</title>
 					<path
@@ -90,7 +90,7 @@ export function Result({
 								fill="none"
 								stroke="currentColor"
 								viewBox="0 0 24 24"
-								aria-label="Success"
+								aria-label={t("result.successAriaLabel")}
 							>
 								<title>Success</title>
 								<path
@@ -115,7 +115,7 @@ export function Result({
 								fill="none"
 								stroke="currentColor"
 								viewBox="0 0 24 24"
-								aria-label="Warning"
+								aria-label={t("result.warningAriaLabel")}
 							>
 								<title>Warning</title>
 								<path
@@ -166,7 +166,7 @@ export function Result({
 						fill="none"
 						stroke="currentColor"
 						viewBox="0 0 24 24"
-						aria-label="Finish"
+						aria-label={t("result.finishAriaLabel")}
 					>
 						<title>Finish</title>
 						<path

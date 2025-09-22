@@ -123,7 +123,9 @@ export function SpreadsheetUpload({
 				setCurrentStep("preview");
 			} catch (err) {
 				setError(
-					err instanceof Error ? err.message : "Erro desconhecido"
+					err instanceof Error
+						? err.message
+						: t("common.unknownError")
 				);
 			} finally {
 				setLoading(false);
@@ -137,6 +139,7 @@ export function SpreadsheetUpload({
 			autoMap,
 			availableFields,
 			setColumnMappings,
+			t,
 		]
 	);
 
@@ -608,8 +611,11 @@ export function SpreadsheetUpload({
 			{data && (
 				<div className="rsu:mt-8 rsu:flex rsu:w-full rsu:items-center rsu:justify-between rsu:border-t rsu:pt-4">
 					<div className="rsu:text-gray-500 rsu:text-sm">
-						{data.fileName} • {data.totalRows} linhas •{" "}
-						{data.totalColumns} colunas
+						{t("common.fileInfo", {
+							fileName: data.fileName,
+							rows: data.totalRows,
+							columns: data.totalColumns,
+						})}
 					</div>
 					<div className="rsu:space-x-2">
 						<ButtonComponent

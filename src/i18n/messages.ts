@@ -66,6 +66,10 @@ export const messages = {
 		"validation.invalidDate": "Formato de data inválido",
 		"validation.invalidEmail": "Formato de email inválido",
 		"validation.invalidUrl": "Formato de URL inválido",
+		"validation.errorsFound": "{count} erros encontrados",
+		"validation.warningsFound": "{count} avisos encontrados",
+		"validation.successMessage": "Dados validados com sucesso!",
+		"validation.noIssuesFound": "Nenhum erro ou aviso encontrado",
 
 		// Editor
 		"editor.title": "Editor de Dados Mapeados",
@@ -78,6 +82,13 @@ export const messages = {
 		"editor.filterLabel": "Filtrar linhas:",
 		"editor.filter.all": "Todas as linhas",
 		"editor.filter.errorsOnly": "Apenas linhas com erros",
+		"editor.clickToEdit": "Clique em uma célula para editar",
+		"editor.keyboardHelp": "Pressione Enter para salvar, Esc para cancelar",
+		"editor.editingCell": "Editando linha {row}, coluna {column}",
+		"editor.displayingErrors":
+			"Exibindo {count} linha(s) com erro de {total} total(is)",
+		"editor.displayingRows":
+			"Exibindo {shown} de {total} linhas e {columns} colunas",
 
 		// Result
 		"result.title": "Upload Concluído!",
@@ -86,6 +97,9 @@ export const messages = {
 		"result.issuesFound": "Encontrados {errors} erros e {warnings} avisos",
 		"result.fileName": "Arquivo:",
 		"result.processedAt": "Processado em:",
+		"result.successAriaLabel": "Sucesso",
+		"result.warningAriaLabel": "Aviso",
+		"result.finishAriaLabel": "Finalizar",
 
 		// Actions
 		"actions.upload": "Upload",
@@ -116,6 +130,8 @@ export const messages = {
 		"common.delete": "Excluir",
 		"common.edit": "Editar",
 		"common.close": "Fechar",
+		"common.unknownError": "Erro desconhecido",
+		"common.fileInfo": "{fileName} • {rows} linhas • {columns} colunas",
 	},
 	"en-US": {
 		// Upload
@@ -183,6 +199,10 @@ export const messages = {
 		"validation.invalidDate": "Invalid date format",
 		"validation.invalidEmail": "Invalid email format",
 		"validation.invalidUrl": "Invalid URL format",
+		"validation.errorsFound": "{count} errors found",
+		"validation.warningsFound": "{count} warnings found",
+		"validation.successMessage": "Data validated successfully!",
+		"validation.noIssuesFound": "No errors or warnings found",
 
 		// Editor
 		"editor.title": "Mapped Data Editor",
@@ -195,6 +215,13 @@ export const messages = {
 		"editor.filterLabel": "Filter rows:",
 		"editor.filter.all": "All rows",
 		"editor.filter.errorsOnly": "Rows with errors only",
+		"editor.clickToEdit": "Click on a cell to edit",
+		"editor.keyboardHelp": "Press Enter to save, Esc to cancel",
+		"editor.editingCell": "Editing row {row}, column {column}",
+		"editor.displayingErrors":
+			"Displaying {count} row(s) with error of {total} total",
+		"editor.displayingRows":
+			"Displaying {shown} of {total} rows and {columns} columns",
 
 		// Result
 		"result.title": "Upload Complete!",
@@ -203,6 +230,9 @@ export const messages = {
 		"result.issuesFound": "Found {errors} errors and {warnings} warnings",
 		"result.fileName": "File:",
 		"result.processedAt": "Processed at:",
+		"result.successAriaLabel": "Success",
+		"result.warningAriaLabel": "Warning",
+		"result.finishAriaLabel": "Finish",
 
 		// Actions
 		"actions.upload": "Upload",
@@ -215,6 +245,7 @@ export const messages = {
 		"actions.back": "Back",
 		"actions.next": "Next",
 		"actions.finish": "Finish",
+		"common.fileInfo": "{fileName} • {rows} rows • {columns} columns",
 		"navigation.previous": "Previous",
 		"navigation.next": "Continue",
 		"navigation.skip": "Skip",
@@ -233,6 +264,144 @@ export const messages = {
 		"common.delete": "Delete",
 		"common.edit": "Edit",
 		"common.close": "Close",
+		"common.unknownError": "Unknown error",
+	},
+	"es-ES": {
+		// Upload
+		"upload.title": "Subida de Hoja de Cálculo",
+		"upload.dragAndDrop": "Arrastra y suelta tu archivo aquí",
+		"upload.or": "o",
+		"upload.browse": "Buscar",
+		"upload.supportedFormats": "Formatos admitidos: CSV, XLSX, XLS",
+		"upload.maxFileSize": "Tamaño máximo: {maxSize}MB",
+		"upload.selectFile": "Seleccionar archivo",
+		"upload.processing": "Procesando archivo...",
+		"upload.error": "Error de subida",
+		"upload.success": "Archivo subido exitosamente",
+
+		// Preview
+		"preview.title": "Vista Previa de Datos",
+		"preview.totalRows": "Filas:",
+		"preview.totalColumns": "Columnas:",
+		"preview.fileName": "Archivo:",
+		"preview.fileSize": "Tamaño:",
+		"preview.lastModified": "Modificado:",
+		"preview.notDisplayedRows": "Filas no mostradas",
+		"preview.notDisplayedColumns": "Columnas no mostradas",
+
+		// Column Mapping
+		"mapping.title": "Configurar Campos",
+		"mapping.subtitle":
+			"Elige qué campos de tu archivo corresponden a los campos del sistema",
+		"mapping.mappedFields": "Campos Configurados",
+		"mapping.unmappedColumns": "Campos No Configurados",
+		"mapping.allMapped": "¡Todos los campos han sido configurados!",
+		"mapping.selectField": "Elige el campo correspondiente",
+		"mapping.chooseField": "Seleccionar campo...",
+		"mapping.autoMap": "Configurar Automáticamente",
+		"mapping.helpTitle": "Cómo funciona:",
+		"mapping.help1":
+			"Cada columna de tu archivo debe asociarse con un campo del sistema",
+		"mapping.help2":
+			"Puedes dejar algunas columnas sin configurar si no las necesitas",
+		"mapping.help3":
+			"Usa la configuración automática para intentar mapear automáticamente",
+
+		// Data Types
+		"dataType.string": "Texto",
+		"dataType.number": "Número",
+		"dataType.boolean": "Verdadero/Falso",
+		"dataType.date": "Fecha",
+		"dataType.email": "Email",
+		"dataType.url": "URL",
+
+		// Validation
+		"validation.title": "Validación de Datos",
+		"validation.errors": "Errores ({count})",
+		"validation.warnings": "Advertencias ({count})",
+		"validation.noErrors": "No se encontraron errores",
+		"validation.noWarnings": "No se encontraron advertencias",
+		"validation.row": "Fila {row}",
+		"validation.column": "Columna {column}",
+		"validation.field": "Campo: {field}",
+		"validation.message": "Mensaje: {message}",
+		"validation.value": "Valor: {value}",
+		"validation.required": "es obligatorio",
+		"validation.invalidNumber": "El valor debe ser un número válido",
+		"validation.invalidBoolean":
+			"El valor debe ser verdadero/falso o sí/no",
+		"validation.invalidDate": "Formato de fecha inválido",
+		"validation.invalidEmail": "Formato de email inválido",
+		"validation.invalidUrl": "Formato de URL inválido",
+		"validation.errorsFound": "{count} errores encontrados",
+		"validation.warningsFound": "{count} advertencias encontradas",
+		"validation.successMessage": "¡Datos validados exitosamente!",
+		"validation.noIssuesFound": "No se encontraron errores ni advertencias",
+
+		// Editor
+		"editor.title": "Editor de Datos Mapeados",
+		"editor.editCell": "Editar celda",
+		"editor.save": "Guardar",
+		"editor.cancel": "Cancelar",
+		"editor.invalidValue": "Valor inválido",
+		"editor.showErrorsOnly": "Mostrar Solo Errores",
+		"editor.hideErrors": "Mostrar Todo",
+		"editor.filterLabel": "Filtrar filas:",
+		"editor.filter.all": "Todas las filas",
+		"editor.filter.errorsOnly": "Solo filas con errores",
+		"editor.clickToEdit": "Haz clic en una celda para editar",
+		"editor.keyboardHelp": "Presiona Enter para guardar, Esc para cancelar",
+		"editor.editingCell": "Editando fila {row}, columna {column}",
+		"editor.displayingErrors":
+			"Mostrando {count} fila(s) con error de {total} total(es)",
+		"editor.displayingRows":
+			"Mostrando {shown} de {total} filas y {columns} columnas",
+
+		// Result
+		"result.title": "¡Subida Completada!",
+		"result.finish": "Finalizar",
+		"result.allValid": "¡Todos los datos han sido validados exitosamente!",
+		"result.issuesFound":
+			"Encontrados {errors} errores y {warnings} advertencias",
+		"result.fileName": "Archivo:",
+		"result.processedAt": "Procesado en:",
+		"result.dataFormat": "Formato:",
+		"result.mappedData": "Datos Mapeados",
+		"result.successAriaLabel": "Éxito",
+		"result.warningAriaLabel": "Advertencia",
+		"result.finishAriaLabel": "Finalizar",
+
+		// Actions
+		"actions.upload": "Subir",
+		"actions.preview": "Vista Previa",
+		"actions.map": "Mapear",
+		"actions.validate": "Validar",
+		"actions.edit": "Editar",
+		"actions.result": "Resultado",
+		"actions.clear": "Limpiar",
+		"actions.back": "Volver",
+		"actions.next": "Siguiente",
+		"actions.finish": "Finalizar",
+		"navigation.previous": "Anterior",
+		"navigation.next": "Continuar",
+		"navigation.skip": "Omitir",
+
+		// Common
+		"common.loading": "Cargando...",
+		"common.error": "Error",
+		"common.success": "Éxito",
+		"common.warning": "Advertencia",
+		"common.info": "Información",
+		"common.yes": "Sí",
+		"common.no": "No",
+		"common.ok": "OK",
+		"common.cancel": "Cancelar",
+		"common.save": "Guardar",
+		"common.delete": "Eliminar",
+		"common.edit": "Editar",
+		"common.close": "Cerrar",
+		"common.unknownError": "Error desconocido",
+		"common.fileInfo": "{fileName} • {rows} filas • {columns} columnas",
 	},
 } as const;
 
