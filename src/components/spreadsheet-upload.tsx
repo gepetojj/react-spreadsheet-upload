@@ -20,24 +20,23 @@ import type {
 	ValidationResult,
 } from "../types";
 
-// Lazy load components that are not always needed
 const ColumnMapping = lazy(() =>
-	import("./column-mapping").then((m) => ({ default: m.ColumnMapping })),
+	import("./column-mapping").then((m) => ({ default: m.ColumnMapping }))
 );
 const DataEditor = lazy(() =>
-	import("./data-editor").then((m) => ({ default: m.DataEditor })),
+	import("./data-editor").then((m) => ({ default: m.DataEditor }))
 );
 const Preview = lazy(() =>
-	import("./preview").then((m) => ({ default: m.Preview })),
+	import("./preview").then((m) => ({ default: m.Preview }))
 );
 const Result = lazy(() =>
-	import("./result").then((m) => ({ default: m.Result })),
+	import("./result").then((m) => ({ default: m.Result }))
 );
 const Upload = lazy(() =>
-	import("./upload").then((m) => ({ default: m.Upload })),
+	import("./upload").then((m) => ({ default: m.Upload }))
 );
 const Validation = lazy(() =>
-	import("./validation").then((m) => ({ default: m.Validation })),
+	import("./validation").then((m) => ({ default: m.Validation }))
 );
 
 export interface SpreadsheetUploadProps
@@ -46,7 +45,7 @@ export interface SpreadsheetUploadProps
 		data: SpreadsheetData,
 		mappings: ColumnMappingType[],
 		validation: ValidationResult,
-		transformedData: Record<string, unknown>[] | null,
+		transformedData: Record<string, unknown>[] | null
 	) => void;
 	uploadOptions?: Partial<UploadOptions>;
 	availableFields?: AvailableField[];
@@ -74,7 +73,6 @@ export function SpreadsheetUpload({
 		"upload" | "preview" | "mapping" | "validation" | "editor" | "result"
 	>("upload");
 
-	// Default theme configuration
 	const defaultTheme: ThemeConfig = {
 		colors: {
 			primary: "#3B82F6",
@@ -102,7 +100,6 @@ export function SpreadsheetUpload({
 		},
 	};
 
-	// Merge user theme with default theme
 	const theme = useMemo(() => {
 		if (!userTheme) return defaultTheme;
 
@@ -148,7 +145,7 @@ export function SpreadsheetUpload({
 
 					const matchesField = (
 						header: string,
-						field: AvailableField,
+						field: AvailableField
 					): boolean => {
 						const normalize = (str: string) =>
 							str
@@ -171,7 +168,7 @@ export function SpreadsheetUpload({
 								field.columnCandidates.some(
 									(candidate) =>
 										normalize(candidate) ===
-										headerNormalized,
+										headerNormalized
 								);
 							if (exactCandidateMatch) return true;
 
@@ -181,10 +178,10 @@ export function SpreadsheetUpload({
 										normalize(candidate);
 									return (
 										candidateNormalized.includes(
-											headerNormalized,
+											headerNormalized
 										) ||
 										headerNormalized.includes(
-											candidateNormalized,
+											candidateNormalized
 										)
 									);
 								});
@@ -203,7 +200,7 @@ export function SpreadsheetUpload({
 
 					parsedData.headers.forEach((header, index) => {
 						const matchingField = availableFields.find((field) =>
-							matchesField(header, field),
+							matchesField(header, field)
 						);
 
 						if (matchingField) {
@@ -226,7 +223,7 @@ export function SpreadsheetUpload({
 				setError(
 					err instanceof Error
 						? err.message
-						: t("common.unknownError"),
+						: t("common.unknownError")
 				);
 			} finally {
 				setLoading(false);
@@ -241,7 +238,7 @@ export function SpreadsheetUpload({
 			availableFields,
 			setColumnMappings,
 			t,
-		],
+		]
 	);
 
 	const handleMappingsChange = useCallback(
@@ -259,7 +256,7 @@ export function SpreadsheetUpload({
 			data,
 			validateData,
 			setValidationResult,
-		],
+		]
 	);
 
 	const handleDataChange = useCallback(
@@ -277,7 +274,7 @@ export function SpreadsheetUpload({
 			columnMappings,
 			validateData,
 			setValidationResult,
-		],
+		]
 	);
 
 	const handleValidate = useCallback(() => {
@@ -291,7 +288,7 @@ export function SpreadsheetUpload({
 					data,
 					columnMappings,
 					validation,
-					transformedData,
+					transformedData
 				);
 			}
 		}
@@ -315,7 +312,7 @@ export function SpreadsheetUpload({
 
 		// Check if all required fields are mapped
 		const mappedTargetFields = new Set(
-			columnMappings.map((m) => m.targetField),
+			columnMappings.map((m) => m.targetField)
 		);
 		const allRequiredFieldsMapped = availableFields
 			.filter((field) => field.required)
@@ -372,19 +369,19 @@ export function SpreadsheetUpload({
 				accessible: accessibleSteps.result,
 			},
 		],
-		[t, data, columnMappings, validationResult, accessibleSteps],
+		[t, data, columnMappings, validationResult, accessibleSteps]
 	);
 
 	const getNavigationState = useCallback(() => {
 		const currentIndex = steps.findIndex(
-			(step: (typeof steps)[0]) => step.key === currentStep,
+			(step: (typeof steps)[0]) => step.key === currentStep
 		);
 
 		const canGoBack = currentIndex > 0;
 
 		// Check if all required fields are mapped
 		const mappedTargetFields = new Set(
-			columnMappings.map((m) => m.targetField),
+			columnMappings.map((m) => m.targetField)
 		);
 		const allRequiredFieldsMapped = availableFields
 			.filter((field) => field.required)
@@ -462,7 +459,7 @@ export function SpreadsheetUpload({
 							type="button"
 							onClick={() =>
 								setCurrentStep(
-									navigation.prevStep as typeof currentStep,
+									navigation.prevStep as typeof currentStep
 								)
 							}
 							className="rsu:inline-flex rsu:items-center rsu:rounded-md rsu:border rsu:border-gray-300 rsu:bg-white rsu:px-4 rsu:py-2 rsu:font-medium rsu:text-gray-700 rsu:text-sm rsu:hover:bg-gray-50"
@@ -503,7 +500,7 @@ export function SpreadsheetUpload({
 							type="button"
 							onClick={() =>
 								setCurrentStep(
-									navigation.nextStep as typeof currentStep,
+									navigation.nextStep as typeof currentStep
 								)
 							}
 							className="rsu:inline-flex rsu:items-center rsu:rounded-md rsu:border rsu:border-transparent rsu:bg-blue-600 rsu:px-4 rsu:py-2 rsu:font-medium rsu:text-sm rsu:text-white rsu:hover:bg-blue-700"
@@ -670,7 +667,7 @@ export function SpreadsheetUpload({
 											data,
 											columnMappings,
 											validationResult,
-											transformedData,
+											transformedData
 										);
 									}
 								}}
@@ -690,7 +687,6 @@ export function SpreadsheetUpload({
 
 	const ButtonComponent = customComponents.Button || "button";
 
-	// Apply theme variables to CSS custom properties
 	const themeStyles = useMemo(
 		() =>
 			({
@@ -712,8 +708,8 @@ export function SpreadsheetUpload({
 				"--rsu-shadow-sm": theme.shadows.sm,
 				"--rsu-shadow-md": theme.shadows.md,
 				"--rsu-shadow-lg": theme.shadows.lg,
-			}) as React.CSSProperties,
-		[theme],
+			} as React.CSSProperties),
+		[theme]
 	);
 
 	return (
@@ -721,7 +717,7 @@ export function SpreadsheetUpload({
 			className={clsx(
 				"rsu rsu:mx-auto rsu:w-full rsu:max-w-7xl rsu:p-4 rsu:sm:p-6 rsu:lg:p-8",
 				className,
-				customStyles.container,
+				customStyles.container
 			)}
 			style={{
 				...themeStyles,
@@ -751,7 +747,7 @@ export function SpreadsheetUpload({
 													| "mapping"
 													| "validation"
 													| "editor"
-													| "result",
+													| "result"
 											);
 										}
 									}}
@@ -761,50 +757,48 @@ export function SpreadsheetUpload({
 										!step.accessible
 											? "rsu:cursor-not-allowed rsu:opacity-50"
 											: currentStep === step.key
-												? "rsu:scale-105 rsu:text-current"
-												: step.completed
-													? "rsu:hover:scale-102 rsu:hover:opacity-80"
-													: "rsu:border-transparent rsu:hover:scale-102 rsu:hover:opacity-80",
-										customStyles.button,
+											? "rsu:scale-105 rsu:text-current"
+											: step.completed
+											? "rsu:hover:scale-102 rsu:hover:opacity-80"
+											: "rsu:border-transparent rsu:hover:scale-102 rsu:hover:opacity-80",
+										customStyles.button
 									)}
 									style={{
 										borderBottomColor: !step.accessible
 											? theme.colors.secondary
 											: currentStep === step.key
-												? theme.colors.primary
-												: step.completed
-													? theme.colors.success
-													: "transparent",
+											? theme.colors.primary
+											: step.completed
+											? theme.colors.success
+											: "transparent",
 										color: !step.accessible
 											? theme.colors.textSecondary
 											: currentStep === step.key
-												? theme.colors.primary
-												: step.completed
-													? theme.colors.success
-													: theme.colors
-															.textSecondary,
+											? theme.colors.primary
+											: step.completed
+											? theme.colors.success
+											: theme.colors.textSecondary,
 									}}
 								>
 									<div
 										className={clsx(
-											"rsu:flex rsu:h-5 rsu:w-5 rsu:items-center rsu:justify-center rsu:rounded-full rsu:font-bold rsu:text-xs rsu:transition-all rsu:duration-200 rsu:sm:h-6 rsu:sm:w-6",
+											"rsu:flex rsu:h-5 rsu:w-5 rsu:items-center rsu:justify-center rsu:rounded-full rsu:font-bold rsu:text-xs rsu:transition-all rsu:duration-200 rsu:sm:h-6 rsu:sm:w-6"
 										)}
 										style={{
 											backgroundColor: !step.accessible
 												? `${theme.colors.secondary}20`
 												: currentStep === step.key
-													? `${theme.colors.primary}20`
-													: step.completed
-														? `${theme.colors.success}20`
-														: `${theme.colors.secondary}20`,
+												? `${theme.colors.primary}20`
+												: step.completed
+												? `${theme.colors.success}20`
+												: `${theme.colors.secondary}20`,
 											color: !step.accessible
 												? theme.colors.textSecondary
 												: currentStep === step.key
-													? theme.colors.primary
-													: step.completed
-														? theme.colors.success
-														: theme.colors
-																.textSecondary,
+												? theme.colors.primary
+												: step.completed
+												? theme.colors.success
+												: theme.colors.textSecondary,
 										}}
 									>
 										{step.completed ? "✓" : index + 1}
@@ -824,54 +818,6 @@ export function SpreadsheetUpload({
 					{renderStepContent()}
 				</div>
 			</div>
-
-			{data && (
-				<div className="rsu:mt-8 rsu:flex rsu:w-full rsu:items-center rsu:justify-between rsu:border-t rsu:pt-4">
-					<div className="rsu:text-gray-500 rsu:text-sm">
-						{t("common.fileInfo", {
-							fileName: data.fileName,
-							rows: data.totalRows,
-							columns: data.totalColumns,
-						})}
-					</div>
-					<div className="rsu:space-x-2">
-						<ButtonComponent
-							onClick={handleClear}
-							className={clsx(
-								"rsu:inline-flex rsu:items-center rsu:border rsu:px-3 rsu:py-2 rsu:font-medium rsu:text-sm rsu:transition-colors",
-								customStyles.button,
-							)}
-							style={{
-								borderRadius: theme.borderRadius,
-								borderColor: theme.colors.secondary,
-								backgroundColor: theme.colors.surface,
-								color: theme.colors.text,
-								boxShadow: theme.shadows.sm,
-							}}
-						>
-							{t("actions.clear")}
-						</ButtonComponent>
-						{currentStep !== "upload" && (
-							<ButtonComponent
-								onClick={() => setCurrentStep("upload")}
-								className={clsx(
-									"rsu:inline-flex rsu:items-center rsu:border rsu:px-3 rsu:py-2 rsu:font-medium rsu:text-sm rsu:transition-colors",
-									customStyles.button,
-								)}
-								style={{
-									borderRadius: theme.borderRadius,
-									borderColor: theme.colors.primary,
-									backgroundColor: theme.colors.primary,
-									color: theme.colors.surface,
-									boxShadow: theme.shadows.sm,
-								}}
-							>
-								{t("actions.back")}
-							</ButtonComponent>
-						)}
-					</div>
-				</div>
-			)}
 		</div>
 	);
 }
