@@ -39,6 +39,11 @@ export const messages = {
 			"Você pode deixar algumas colunas sem configurar se não precisar delas",
 		"mapping.help3":
 			"Use a configuração automática para tentar mapear automaticamente",
+		"mapping.requiredFields": "Campos Obrigatórios",
+		"mapping.requiredFieldsMissing": "Campos obrigatórios não mapeados",
+		"mapping.requiredFieldIndicator": "(obrigatório)",
+		"mapping.requiredFieldsHelp":
+			"Campos marcados com * são obrigatórios e devem ser configurados antes de continuar",
 
 		// Data Types
 		"dataType.string": "Texto",
@@ -173,6 +178,11 @@ export const messages = {
 			"You can leave some columns unconfigured if you don't need them",
 		"mapping.help3":
 			"Use automatic configuration to try to map automatically",
+		"mapping.requiredFields": "Required Fields",
+		"mapping.requiredFieldsMissing": "Required fields not mapped",
+		"mapping.requiredFieldIndicator": "(required)",
+		"mapping.requiredFieldsHelp":
+			"Fields marked with * are required and must be configured before continuing",
 
 		// Data Types
 		"dataType.string": "Text",
@@ -306,6 +316,11 @@ export const messages = {
 			"Puedes dejar algunas columnas sin configurar si no las necesitas",
 		"mapping.help3":
 			"Usa la configuración automática para intentar mapear automáticamente",
+		"mapping.requiredFields": "Campos Obligatorios",
+		"mapping.requiredFieldsMissing": "Campos obligatorios no mapeados",
+		"mapping.requiredFieldIndicator": "(obligatorio)",
+		"mapping.requiredFieldsHelp":
+			"Los campos marcados con * son obligatorios y deben configurarse antes de continuar",
 
 		// Data Types
 		"dataType.string": "Texto",

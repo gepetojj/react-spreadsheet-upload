@@ -137,6 +137,7 @@ export interface AvailableField {
 	field: string;
 	label: string;
 	dataType: ColumnMapping["dataType"];
+	required?: boolean;
 	columnCandidates?: string[];
 }
 

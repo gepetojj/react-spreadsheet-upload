@@ -45,6 +45,19 @@ export function ColumnMapping({
 		}));
 	}, [data.headers, mappings]);
 
+	// Get required fields that are not mapped
+	const requiredFieldsNotMapped = useMemo(() => {
+		const mappedTargetFields = new Set(mappings.map((m) => m.targetField));
+		return availableFields.filter(
+			(field) => field.required && !mappedTargetFields.has(field.field)
+		);
+	}, [availableFields, mappings]);
+
+	// Get all required fields
+	const requiredFields = useMemo(() => {
+		return availableFields.filter((field) => field.required);
+	}, [availableFields]);
+
 	// Create mapping for quick lookup
 	const mappingMap = useMemo(() => {
 		const map = new Map<number, ColumnMappingType>();
@@ -149,21 +162,58 @@ export function ColumnMapping({
 			return false;
 		};
 
+		// Separate required and optional fields
+		const requiredFields = availableFields.filter(
+			(field) => field.required
+		);
+		const optionalFields = availableFields.filter(
+			(field) => !field.required
+		);
+
+		// Process headers and try to map them
+		const processedHeaders = new Set<number>();
+
+		// First, try to map required fields
 		data.headers.forEach((header, index) => {
-			const matchingField = availableFields.find((field) =>
+			if (processedHeaders.has(index)) return;
+
+			const matchingRequiredField = requiredFields.find((field) =>
 				matchesField(header, field)
 			);
 
-			if (matchingField) {
+			if (matchingRequiredField) {
 				autoMappings.push({
 					sourceIndex: index,
 					sourceName: header,
-					targetField: matchingField.field,
-					targetLabel: matchingField.label,
-					dataType: matchingField.dataType,
-					required: false,
+					targetField: matchingRequiredField.field,
+					targetLabel: matchingRequiredField.label,
+					dataType: matchingRequiredField.dataType,
+					required: matchingRequiredField.required || false,
 					validation: [],
 				});
+				processedHeaders.add(index);
+			}
+		});
+
+		// Then, try to map optional fields
+		data.headers.forEach((header, index) => {
+			if (processedHeaders.has(index)) return;
+
+			const matchingOptionalField = optionalFields.find((field) =>
+				matchesField(header, field)
+			);
+
+			if (matchingOptionalField) {
+				autoMappings.push({
+					sourceIndex: index,
+					sourceName: header,
+					targetField: matchingOptionalField.field,
+					targetLabel: matchingOptionalField.label,
+					dataType: matchingOptionalField.dataType,
+					required: matchingOptionalField.required || false,
+					validation: [],
+				});
+				processedHeaders.add(index);
 			}
 		});
 
@@ -214,6 +264,121 @@ export function ColumnMapping({
 					</ButtonComponent>
 				)}
 			</div>
+
+			{/* Required Fields Warning */}
+			{requiredFieldsNotMapped.length > 0 && (
+				<div className="rsu:rounded-lg rsu:border rsu:border-red-200 rsu:bg-red-50 rsu:p-4">
+					<div className="rsu:flex rsu:items-start">
+						<svg
+							className="rsu:h-5 rsu:mt-0.5 rsu:text-red-600 rsu:w-5"
+							fill="none"
+							stroke="currentColor"
+							viewBox="0 0 24 24"
+							aria-label="Warning"
+						>
+							<title>Aviso</title>
+							<path
+								strokeLinecap="round"
+								strokeLinejoin="round"
+								strokeWidth={2}
+								d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"
+							/>
+						</svg>
+						<div className="rsu:ml-3">
+							<h4 className="rsu:font-medium rsu:text-red-800">
+								{t("mapping.requiredFieldsMissing")} (
+								{requiredFieldsNotMapped.length})
+							</h4>
+							<p className="rsu:text-red-700 rsu:text-sm rsu:mt-1">
+								{t("mapping.requiredFieldsHelp")}
+							</p>
+							<div className="rsu:mt-2 rsu:space-y-1">
+								{requiredFieldsNotMapped.map((field) => (
+									<div
+										key={field.field}
+										className="rsu:flex rsu:items-center rsu:text-red-700 rsu:text-sm"
+									>
+										<span className="rsu:font-medium">
+											{field.label}
+										</span>
+										<span className="rsu:ml-1 rsu:text-red-600">
+											*
+										</span>
+									</div>
+								))}
+							</div>
+						</div>
+					</div>
+				</div>
+			)}
+
+			{/* Required Fields Status */}
+			{requiredFields.length > 0 && (
+				<div className="rsu:rounded-lg rsu:bg-blue-50 rsu:p-4">
+					<h4 className="rsu:font-medium rsu:text-blue-800 rsu:mb-2">
+						{t("mapping.requiredFields")}
+					</h4>
+					<div className="rsu:space-y-2">
+						{requiredFields.map((field) => {
+							const isMapped = mappings.some(
+								(mapping) => mapping.targetField === field.field
+							);
+							return (
+								<div
+									key={field.field}
+									className={`rsu:flex rsu:items-center rsu:justify-between rsu:rounded-md rsu:p-2 ${
+										isMapped
+											? "rsu:bg-green-100 rsu:text-green-800"
+											: "rsu:bg-gray-100 rsu:text-gray-700"
+									}`}
+								>
+									<div className="rsu:flex rsu:items-center">
+										<span className="rsu:font-medium">
+											{field.label}
+										</span>
+										<span className="rsu:ml-1 rsu:text-red-600">
+											*
+										</span>
+									</div>
+									{isMapped ? (
+										<svg
+											aria-label="Mapped"
+											className="rsu:h-4 rsu:text-green-600 rsu:w-4"
+											fill="none"
+											stroke="currentColor"
+											viewBox="0 0 24 24"
+										>
+											<title>Mapeado</title>
+											<path
+												strokeLinecap="round"
+												strokeLinejoin="round"
+												strokeWidth={2}
+												d="M5 13l4 4L19 7"
+											/>
+										</svg>
+									) : (
+										<svg
+											aria-label="Not mapped"
+											className="rsu:h-4 rsu:text-gray-500 rsu:w-4"
+											fill="none"
+											stroke="currentColor"
+											viewBox="0 0 24 24"
+										>
+											<title>Não mapeado</title>
+											<path
+												strokeLinecap="round"
+												strokeLinejoin="round"
+												strokeWidth={2}
+												d="M6 18L18 6M6 6l12 12"
+											/>
+										</svg>
+									)}
+								</div>
+							);
+						})}
+					</div>
+				</div>
+			)}
 
 			{/* Mapped Fields */}
 			{mappings.length > 0 && (
@@ -334,6 +499,7 @@ export function ColumnMapping({
 													value={field.field}
 												>
 													{field.label}
+													{field.required ? " *" : ""}
 												</option>
 											))}
 										</SelectComponent>
@@ -354,6 +520,9 @@ export function ColumnMapping({
 						<li>• {t("mapping.help1")}</li>
 						<li>• {t("mapping.help2")}</li>
 						<li>• {t("mapping.help3")}</li>
+						{requiredFields.length > 0 && (
+							<li>• {t("mapping.requiredFieldsHelp")}</li>
+						)}
 					</ul>
 				</div>
 			</div>

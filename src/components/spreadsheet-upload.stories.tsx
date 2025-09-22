@@ -102,6 +102,44 @@ export const Default: Story = {
 	},
 };
 
+export const WithRequiredFields: StoryObj<typeof meta> = {
+	args: {
+		availableFields: [
+			{
+				field: "name",
+				label: "Nome",
+				dataType: "string" as const,
+				required: true,
+				columnCandidates: ["nome", "name", "fullname"],
+			},
+			{
+				field: "email",
+				label: "Email",
+				dataType: "email" as const,
+				required: true,
+				columnCandidates: ["email", "e-mail", "mail"],
+			},
+			{
+				field: "phone",
+				label: "Telefone",
+				dataType: "string" as const,
+				required: false,
+				columnCandidates: ["telefone", "phone", "celular"],
+			},
+			{
+				field: "age",
+				label: "Idade",
+				dataType: "number" as const,
+				required: false,
+				columnCandidates: ["idade", "age", "anos"],
+			},
+		],
+		autoMap: true,
+		autoValidate: true,
+		showSteps: true,
+	},
+};
+
 export const WithoutSteps: Story = {
 	args: {
 		...Default.args,

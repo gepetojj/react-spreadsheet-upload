@@ -156,7 +156,7 @@ export function SpreadsheetUpload({
 								targetField: matchingField.field,
 								targetLabel: matchingField.label,
 								dataType: matchingField.dataType,
-								required: false,
+								required: matchingField.required || false,
 								validation: [],
 							});
 						}
@@ -256,15 +256,23 @@ export function SpreadsheetUpload({
 		const hasData = !!data;
 		const hasMappings = columnMappings.length > 0;
 
+		// Check if all required fields are mapped
+		const mappedTargetFields = new Set(
+			columnMappings.map((m) => m.targetField)
+		);
+		const allRequiredFieldsMapped = availableFields
+			.filter((field) => field.required)
+			.every((field) => mappedTargetFields.has(field.field));
+
 		return {
 			upload: true,
 			preview: hasData,
 			mapping: hasData,
-			validation: hasData && hasMappings,
+			validation: hasData && hasMappings && allRequiredFieldsMapped,
 			editor: hasData,
-			result: hasData && hasMappings,
+			result: hasData && hasMappings && allRequiredFieldsMapped,
 		};
-	}, [data, columnMappings]);
+	}, [data, columnMappings, availableFields]);
 
 	const accessibleSteps = getAccessibleSteps();
 
@@ -317,6 +325,14 @@ export function SpreadsheetUpload({
 
 		const canGoBack = currentIndex > 0;
 
+		// Check if all required fields are mapped
+		const mappedTargetFields = new Set(
+			columnMappings.map((m) => m.targetField)
+		);
+		const allRequiredFieldsMapped = availableFields
+			.filter((field) => field.required)
+			.every((field) => mappedTargetFields.has(field.field));
+
 		let canGoForward = false;
 		switch (currentStep) {
 			case "upload":
@@ -326,13 +342,16 @@ export function SpreadsheetUpload({
 				canGoForward = columnMappings.length > 0;
 				break;
 			case "mapping":
-				canGoForward = !!validationResult;
+				canGoForward = !!validationResult && allRequiredFieldsMapped;
 				break;
 			case "validation":
 				canGoForward = !!data;
 				break;
 			case "editor":
-				canGoForward = !!data && columnMappings.length > 0;
+				canGoForward =
+					!!data &&
+					columnMappings.length > 0 &&
+					allRequiredFieldsMapped;
 				break;
 			case "result":
 				canGoForward = false; // Can't go forward from result
@@ -355,7 +374,14 @@ export function SpreadsheetUpload({
 			prevStep,
 			nextStep,
 		};
-	}, [currentStep, steps, data, columnMappings, validationResult]);
+	}, [
+		currentStep,
+		steps,
+		data,
+		columnMappings,
+		validationResult,
+		availableFields,
+	]);
 
 	const navigation = getNavigationState();
 
