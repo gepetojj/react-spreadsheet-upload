@@ -1,66 +1,57 @@
 # react-spreadsheet-upload
 
-Biblioteca React completa para upload, visualização, mapeamento de colunas, validação e edição de dados de planilhas (CSV, XLSX). Focada em experiência do usuário fluida, customização total (temas, componentes, estilos) e responsividade nativa.
+Complete React library for spreadsheet data upload, preview, column mapping, validation, and editing (CSV, XLSX). Focused on smooth user experience, full customization (themes, components, styles) and native responsiveness.
 
 ![GIF demonstrando uso da biblioteca](https://github.com/gepetojj/react-spreadsheet-upload/raw/main/.github/blobs/demo.gif)
 
-## Índice
+## Table of Contents
 
--   Conceitos rápidos
--   Instalação
--   Exemplo mínimo (end-to-end)
--   Tipos principais (modelo de domínio)
--   Componentes e funcionalidades
--   Tema e customização
--   Validação de dados
--   Exportação de dados
--   Internacionalização (i18n)
--   Hooks personalizados
--   Exemplos avançados
--   API de referência
--   Contribuição e licença
+-   Quick Concepts
+-   Installation
+-   Minimal Example (end-to-end)
+-   Main Types
+-   Components and Features
+-   Theme and Customization
+-   Data Validation
+-   Data Export
+-   Internationalization (i18n)
+-   Custom Hooks
+-   Advanced Examples
+-   API Reference
+-   Contribution and License
 
-## Conceitos rápidos
+## Quick Concepts
 
--   **Upload**: Drag & drop ou browse com suporte a CSV, XLSX, ODS
--   **Preview**: Visualização paginada com preview de dados antes do processamento
--   **Column Mapping**: Mapeamento inteligente de colunas para campos do sistema
--   **Validation**: Validação automática com regras customizáveis
--   **Data Editor**: Edição inline de células com validação em tempo real
--   **Result**: Feedback final com estatísticas e opções de exportação
--   **Theme**: Sistema completo de temas com cores, espaçamento e componentes customizáveis
--   **Responsive**: Design responsivo nativo para mobile, tablet e desktop
+-   **Upload**: Drag & drop or browse with support for CSV, XLSX, ODS
+-   **Preview**: Paginated preview with data preview before processing
+-   **Column Mapping**: Intelligent column mapping to system fields
+-   **Validation**: Automatic validation with customizable rules
+-   **Data Editor**: Inline cell editing with real-time validation
+-   **Result**: Final feedback with statistics and export options
+-   **Theme**: Complete theme system with customizable colors, spacing, and components
+-   **Responsive**: Native responsive design for mobile, tablet, and desktop
 
-Princípios: zero dependências externas (apenas papaparse, xlsx), tipagem forte, validação "fail fast", extensibilidade controlada, experiência mobile-first.
+Principles: minimal external dependencies (only papaparse, xlsx), strong typing, "fail fast" validation, controlled extensibility, mobile-first experience.
 
-## Instalação
+## Installation
 
 ```sh
 npm install react-spreadsheet-upload
-# ou
+# or
 yarn add react-spreadsheet-upload
-# ou
+# or
 pnpm add react-spreadsheet-upload
 ```
 
-**Dependências peer:**
-
-```json
-{
-	"react": "^19.1.1",
-	"react-dom": "^19.1.1"
-}
-```
-
-**CSS necessário:**
+**Required CSS:**
 
 ```js
 import "react-spreadsheet-upload/styles.css";
 ```
 
-## Exemplo mínimo (end-to-end)
+## Minimal Example (end-to-end)
 
-Fluxo completo: upload → preview → mapeamento → validação → edição → resultado.
+Complete flow: upload → preview → mapping → validation → editing → result.
 
 ```tsx
 import React from "react";
@@ -68,11 +59,11 @@ import { SpreadsheetUpload } from "react-spreadsheet-upload";
 import "react-spreadsheet-upload/styles.css";
 
 function App() {
-	// Campos disponíveis no seu sistema
+	// Available fields in your system
 	const availableFields = [
 		{
 			field: "name",
-			label: "Nome",
+			label: "Name",
 			dataType: "string" as const,
 			required: true,
 		},
@@ -82,8 +73,8 @@ function App() {
 			dataType: "email" as const,
 			required: true,
 		},
-		{ field: "age", label: "Idade", dataType: "number" as const },
-		{ field: "active", label: "Ativo", dataType: "boolean" as const },
+		{ field: "age", label: "Age", dataType: "number" as const },
+		{ field: "active", label: "Active", dataType: "boolean" as const },
 	];
 
 	const handleDataProcessed = (
@@ -92,7 +83,7 @@ function App() {
 		validation,
 		transformedData
 	) => {
-		console.log("Dados processados:", {
+		console.log("Processed data:", {
 			original: data,
 			mappings,
 			validation,
@@ -124,7 +115,7 @@ function App() {
 				},
 			}}
 			i18n={{
-				locale: "pt-BR",
+				locale: "en-US",
 			}}
 		/>
 	);
@@ -133,127 +124,58 @@ function App() {
 export default App;
 ```
 
-## Tipos principais
+## Main Types
 
--   **CellData**: Representa uma célula individual com valor, tipo e estado de validação
--   **ColumnMapping**: Mapeamento entre coluna da planilha e campo do sistema
--   **SpreadsheetData**: Dados completos da planilha processada
--   **ValidationResult**: Resultado da validação com erros e avisos
--   **ThemeConfig**: Configuração completa de cores, espaçamento e sombras
--   **UploadOptions**: Configurações de upload (formatos, tamanho máximo, etc.)
--   **AvailableField**: Campos disponíveis para mapeamento no sistema
+-   **CellData**: Represents an individual cell with value, type, and validation state
+-   **ColumnMapping**: Mapping between spreadsheet column and system field
+-   **SpreadsheetData**: Complete processed spreadsheet data
+-   **ValidationResult**: Validation result with errors and warnings
+-   **ThemeConfig**: Complete configuration of colors, spacing, and shadows
+-   **UploadOptions**: Upload configurations (formats, max size, etc.)
+-   **AvailableField**: Available fields for system mapping
 
-Todos os tipos estão exportados e tipados em `src/types/index.ts`.
+All types are exported and typed in `src/types/index.ts`.
 
-## Componentes e funcionalidades
+## Components and Features
 
-### SpreadsheetUpload (componente principal)
+### SpreadsheetUpload (main component)
 
-Componente orquestrador que gerencia todo o fluxo de upload e processamento.
+Orchestrator component that manages the entire upload and processing flow.
 
-#### Props principais:
+#### Main Props:
 
-| Prop               | Objetivo                                                                | Funcionamento                                                                                                                                                                                                      |
-| ------------------ | ----------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `availableFields`  | Define os campos do sistema disponíveis para mapeamento.                | Array de objetos `AvailableField`. Usado na etapa de mapeamento para sugerir e validar correspondências entre colunas da planilha e campos do sistema.                                                             |
-| `onDataProcessed`  | Callback executado após o processamento completo dos dados.             | Função chamada com os dados processados: `data` (dados da planilha), `mappings` (mapeamentos realizados), `validation` (resultado da validação) e `transformedData` (dados prontos para importação, se aplicável). |
-| `uploadOptions`    | Configurações do upload de arquivos.                                    | Objeto parcial de `UploadOptions`. Permite definir formatos aceitos, tamanho máximo, múltiplos arquivos, etc.                                                                                                      |
-| `theme`            | Personalização de cores, espaçamento e sombras do componente.           | Objeto parcial de `ThemeConfig`. Permite customizar visual do componente para se adequar ao tema da aplicação.                                                                                                     |
-| `i18n`             | Configuração de idioma e traduções.                                     | Objeto parcial de `I18nConfig`. Define o idioma (`locale`) e permite customizar textos exibidos.                                                                                                                   |
-| `showSteps`        | Exibe ou oculta o fluxo de etapas do componente.                        | Booleano. Se `true` (padrão), mostra a navegação por etapas (upload, preview, mapeamento, etc). Se `false`, oculta a barra de etapas.                                                                              |
-| `autoValidate`     | Ativa validação automática após upload e mapeamento.                    | Booleano. Se `true` (padrão), valida os dados automaticamente após cada etapa relevante. Se `false`, exige ação manual para validar.                                                                               |
-| `autoMap`          | Ativa mapeamento automático de colunas.                                 | Booleano. Se `true`, tenta mapear colunas da planilha para campos do sistema automaticamente. Se `false` (padrão), exige mapeamento manual.                                                                        |
-| `customComponents` | Permite substituir componentes internos por versões customizadas.       | Objeto com componentes React opcionais: `Button`, `Input`, `Select`, `Table`, `Loading`. Útil para integração com design system próprio.                                                                           |
-| `customStyles`     | Permite adicionar ou sobrescrever classes CSS nos elementos principais. | Objeto com strings de classes CSS para: `container`, `button`, `input`, `select`, `table`, `cell`, `header`. Facilita customização visual sem alterar o tema global.                                               |
-| `className`        | Classe CSS adicional para o container principal do componente.          | String. Permite aplicar estilos externos ou utilitários ao componente principal.                                                                                                                                   |
+| Prop               | Purpose                                                    | Functionality                                                                                                                                                                                   |
+| ------------------ | ---------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `availableFields`  | Defines the system fields available for mapping.           | Array of `AvailableField` objects. Used in the mapping step to suggest and validate matches between spreadsheet columns and system fields.                                                      |
+| `onDataProcessed`  | Callback executed after complete data processing.          | Function called with processed data: `data` (spreadsheet data), `mappings` (performed mappings), `validation` (validation result) and `transformedData` (data ready for import, if applicable). |
+| `uploadOptions`    | File upload configurations.                                | Partial `UploadOptions` object. Allows defining accepted formats, maximum size, multiple files, etc.                                                                                            |
+| `theme`            | Component colors, spacing and shadows customization.       | Partial `ThemeConfig` object. Allows customizing component visuals to match the application's theme.                                                                                            |
+| `i18n`             | Language and translations configuration.                   | Partial `I18nConfig` object. Defines the language (`locale`) and allows customizing displayed texts.                                                                                            |
+| `showSteps`        | Shows or hides the component's step flow.                  | Boolean. If `true` (default), shows step navigation (upload, preview, mapping, etc). If `false`, hides the step bar.                                                                            |
+| `autoValidate`     | Enables automatic validation after upload and mapping.     | Boolean. If `true` (default), validates data automatically after each relevant step. If `false`, requires manual action to validate.                                                            |
+| `autoMap`          | Enables automatic column mapping.                          | Boolean. If `true`, attempts to map spreadsheet columns to system fields automatically. If `false` (default), requires manual mapping.                                                          |
+| `customComponents` | Allows replacing internal components with custom versions. | Object with optional React components: `Button`, `Input`, `Select`, `Table`, `Loading`. Useful for integration with your own design system.                                                     |
+| `customStyles`     | Allows adding or overriding CSS classes on main elements.  | Object with CSS class strings for: `container`, `button`, `input`, `select`, `table`, `cell`, `header`. Facilitates visual customization without changing the global theme.                     |
+| `className`        | Additional CSS class for the main component container.     | String. Allows applying external styles or utilities to the main component.                                                                                                                     |
 
-### Upload Component
+## Theme and Customization
 
-Responsável pelo upload de arquivos via drag & drop ou browse.
+Complete theme system with full customization of colors, components, and styles.
 
-#### Funcionalidades:
-
--   ✅ Drag & drop visual com feedback
--   ✅ Validação de formato e tamanho
--   ✅ Loading states
--   ✅ Suporte a múltiplos formatos (CSV, XLSX, ODS)
--   ✅ Tratamento de erros
-
-### Preview Component
-
-Visualização paginada dos dados antes do processamento.
-
-#### Funcionalidades:
-
--   ✅ Preview limitado (máx. 10 linhas, 10 colunas)
--   ✅ Informações do arquivo (nome, tamanho, data)
--   ✅ Navegação por células
--   ✅ Responsivo com scroll horizontal
-
-### Column Mapping Component
-
-Mapeamento inteligente de colunas para campos do sistema.
-
-#### Funcionalidades:
-
--   ✅ Mapeamento manual via dropdowns
--   ✅ Auto-mapeamento inteligente (opcional)
--   ✅ Validação de campos obrigatórios
--   ✅ Candidatos de coluna sugeridos
--   ✅ Feedback visual de progresso
-
-### Validation Component
-
-Validação automática dos dados mapeados.
-
-#### Funcionalidades:
-
--   ✅ Regras de validação customizáveis
--   ✅ Detecção de erros e avisos
--   ✅ Agrupamento por tipo de problema
--   ✅ Navegação para células problemáticas
--   ✅ Estatísticas de validação
-
-### Data Editor Component
-
-Edição inline de dados com validação em tempo real.
-
-#### Funcionalidades:
-
--   ✅ Edição inline de células
--   ✅ Validação em tempo real
--   ✅ Filtros (todos/erros apenas)
--   ✅ Navegação por teclado
--   ✅ Undo/redo básico
-
-### Result Component
-
-Feedback final com estatísticas e opções.
-
-#### Funcionalidades:
-
--   ✅ Estatísticas completas (total, válidos, erros, avisos)
--   ✅ Download de dados processados
--   ✅ Navegação de volta aos steps anteriores
-
-## Tema e customização
-
-Sistema completo de temas com customização total de cores, componentes e estilos.
-
-### ThemeConfig completo:
+### Complete ThemeConfig:
 
 ```tsx
 interface ThemeConfig {
 	colors: {
-		primary: string; // Azul principal para ações
-		secondary: string; // Cinza para elementos secundários
-		success: string; // Verde para sucesso/validação
-		warning: string; // Amarelo para avisos
-		error: string; // Vermelho para erros
-		background: string; // Fundo geral da aplicação
-		surface: string; // Fundo de cards/componentes
-		text: string; // Texto principal
-		textSecondary: string; // Texto secundário
+		primary: string; // Main blue for actions
+		secondary: string; // Gray for secondary elements
+		success: string; // Green for success/validation
+		warning: string; // Yellow for warnings
+		error: string; // Red for errors
+		background: string; // General application background
+		surface: string; // Cards/components background
+		text: string; // Main text
+		textSecondary: string; // Secondary text
 	};
 	spacing: {
 		xs: string; // 0.25rem
@@ -264,14 +186,14 @@ interface ThemeConfig {
 	};
 	borderRadius: string; // 0.375rem
 	shadows: {
-		sm: string; // Sombra pequena
-		md: string; // Sombra média
-		lg: string; // Sombra grande
+		sm: string; // Small shadow
+		md: string; // Medium shadow
+		lg: string; // Large shadow
 	};
 }
 ```
 
-### Exemplo de tema dark:
+### Dark theme example:
 
 ```tsx
 const darkTheme: Partial<ThemeConfig> = {
@@ -302,7 +224,7 @@ const darkTheme: Partial<ThemeConfig> = {
 };
 ```
 
-### Componentes customizáveis:
+### Customizable Components:
 
 ```tsx
 const customComponents = {
@@ -344,11 +266,11 @@ const customStyles = {
 };
 ```
 
-## Validação de dados
+## Data Validation
 
-Sistema robusto de validação com regras customizáveis.
+Robust validation system with customizable rules.
 
-### Tipos de regras:
+### Rule Types:
 
 ```tsx
 interface ValidationRule {
@@ -366,7 +288,7 @@ interface ValidationRule {
 }
 ```
 
-### Exemplo de uso:
+### Usage Example:
 
 ```tsx
 const availableFields = [
@@ -379,24 +301,24 @@ const availableFields = [
 			{
 				type: "pattern",
 				value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-				message: "Email inválido",
+				message: "Invalid email",
 			},
 		],
 	},
 	{
 		field: "age",
-		label: "Idade",
+		label: "Age",
 		dataType: "number" as const,
 		validation: [
 			{
 				type: "min",
 				value: 0,
-				message: "Idade deve ser positiva",
+				message: "Age must be positive",
 			},
 			{
 				type: "max",
 				value: 120,
-				message: "Idade deve ser realista",
+				message: "Age must be realistic",
 			},
 		],
 	},
@@ -421,15 +343,15 @@ interface ValidationError {
 }
 ```
 
-## Exportação de dados
+## Data Export
 
-### Exemplo de uso:
+### Usage Example:
 
 ```tsx
-// No callback onDataProcessed, você pode implementar exportação
+// In the onDataProcessed callback, you can implement export
 const handleDataProcessed = (data, mappings, validation, transformedData) => {
 	if (validation.isValid && transformedData) {
-		// Exportar como CSV
+		// Export as CSV
 		const csvContent = transformedData
 			.map((row) => Object.values(row).join(","))
 			.join("\n");
@@ -439,7 +361,7 @@ const handleDataProcessed = (data, mappings, validation, transformedData) => {
 
 		const a = document.createElement("a");
 		a.href = url;
-		a.download = "dados-processados.csv";
+		a.download = "processed-data.csv";
 		a.click();
 
 		URL.revokeObjectURL(url);
@@ -447,9 +369,9 @@ const handleDataProcessed = (data, mappings, validation, transformedData) => {
 };
 ```
 
-## Internacionalização (i18n)
+## Internationalization (i18n)
 
-Suporte completo a múltiplos idiomas.
+Complete support for multiple languages.
 
 ### I18nConfig:
 
@@ -460,40 +382,40 @@ interface I18nConfig {
 }
 ```
 
-### Idiomas suportados:
+### Supported Languages:
 
--   `pt-BR` (Português Brasil) - padrão
--   `en-US` (Inglês EUA)
--   `es-ES` (Espanhol da Espanha)
+-   `pt-BR` (Brazilian Portuguese) - default
+-   `en-US` (US English)
+-   `es-ES` (Spanish Spain)
 
-### Exemplo de uso:
+### Usage Example:
 
 ```tsx
 const i18nConfig = {
-	locale: "pt-BR",
+	locale: "en-US",
 	messages: {
-		// Sobrescrever mensagens específicas
-		"upload.dragAndDrop": "Arraste seu arquivo aqui",
-		"validation.errors": "Erros encontrados",
+		// Override specific messages
+		"upload.dragAndDrop": "Drop your file here",
+		"validation.errors": "Errors found",
 	},
 };
 ```
 
-### Chaves de tradução disponíveis:
+### Available Translation Keys:
 
--   `upload.*`: Mensagens do componente de upload
--   `preview.*`: Mensagens do componente de preview
--   `mapping.*`: Mensagens do mapeamento de colunas
--   `validation.*`: Mensagens de validação
--   `editor.*`: Mensagens do editor de dados
--   `result.*`: Mensagens do resultado final
--   `common.*`: Mensagens comuns
+-   `upload.*`: Upload component messages
+-   `preview.*`: Preview component messages
+-   `mapping.*`: Column mapping messages
+-   `validation.*`: Validation messages
+-   `editor.*`: Data editor messages
+-   `result.*`: Final result messages
+-   `common.*`: Common messages
 
-## Hooks personalizados
+## Custom Hooks
 
 ### useSpreadsheetData
 
-Hook principal para gerenciamento de estado.
+Main hook for state management.
 
 ```tsx
 import { useSpreadsheetData } from "react-spreadsheet-upload";
@@ -517,36 +439,36 @@ const {
 
 ### useFileParser
 
-Hook para parsing de arquivos.
+Hook for file parsing.
 
 ```tsx
 import { useFileParser } from "react-spreadsheet-upload";
 
 const { parseFile } = useFileParser();
 
-// Uso
+// Usage
 const handleFile = async (file: File) => {
 	const result = await parseFile(file);
-	console.log("Dados parseados:", result);
+	console.log("Parsed data:", result);
 };
 ```
 
 ### useValidation
 
-Hook para validação de dados.
+Hook for data validation.
 
 ```tsx
 import { useValidation } from "react-spreadsheet-upload";
 
 const { validateData } = useValidation(i18n);
 
-// Uso
+// Usage
 const validationResult = await validateData(data, mappings);
 ```
 
-## Exemplos avançados
+## Advanced Examples
 
-### Com tema customizado completo:
+### With complete custom theme:
 
 ```tsx
 import { SpreadsheetUpload } from "react-spreadsheet-upload";
@@ -578,7 +500,7 @@ const customTheme = {
 	},
 };
 
-// Componentes customizados
+// Custom components
 const CustomButton = ({ children, className, ...props }) => (
 	<button
 		className={`bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-lg transition-colors ${className}`}
@@ -594,7 +516,7 @@ function AdvancedExample() {
 			availableFields={[
 				{
 					field: "name",
-					label: "Nome",
+					label: "Name",
 					dataType: "string",
 					required: true,
 				},
@@ -604,10 +526,10 @@ function AdvancedExample() {
 					dataType: "email",
 					required: true,
 				},
-				{ field: "phone", label: "Telefone", dataType: "string" },
+				{ field: "phone", label: "Phone", dataType: "string" },
 				{
 					field: "birthDate",
-					label: "Data Nascimento",
+					label: "Birth Date",
 					dataType: "date",
 				},
 			]}
@@ -622,10 +544,10 @@ function AdvancedExample() {
 				autoParse: true,
 			}}
 			i18n={{
-				locale: "pt-BR",
+				locale: "en-US",
 			}}
 			onDataProcessed={(data, mappings, validation, transformed) => {
-				console.log("Processamento completo:", {
+				console.log("Complete processing:", {
 					data,
 					mappings,
 					validation,
@@ -637,25 +559,25 @@ function AdvancedExample() {
 }
 ```
 
-### Com validação avançada:
+### With advanced validation:
 
 ```tsx
 const availableFields = [
 	{
 		field: "name",
-		label: "Nome Completo",
+		label: "Full Name",
 		dataType: "string",
 		required: true,
 		validation: [
 			{
 				type: "minLength",
 				value: 2,
-				message: "Nome deve ter pelo menos 2 caracteres",
+				message: "Name must have at least 2 characters",
 			},
 			{
 				type: "maxLength",
 				value: 100,
-				message: "Nome deve ter no máximo 100 caracteres",
+				message: "Name must have at most 100 characters",
 			},
 		],
 	},
@@ -668,28 +590,28 @@ const availableFields = [
 			{
 				type: "pattern",
 				value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-				message: "Email deve ter formato válido",
+				message: "Email must have valid format",
 			},
 		],
 	},
 	{
 		field: "age",
-		label: "Idade",
+		label: "Age",
 		dataType: "number",
 		validation: [
 			{
 				type: "min",
 				value: 0,
-				message: "Idade deve ser positiva",
+				message: "Age must be positive",
 			},
 			{
 				type: "max",
 				value: 120,
-				message: "Idade deve ser realista",
+				message: "Age must be realistic",
 			},
 			{
 				type: "custom",
-				message: "Idade deve ser maior que 18 para cadastro",
+				message: "Age must be greater than 18 for registration",
 				validator: (value) => Number(value) >= 18,
 			},
 		],
@@ -697,20 +619,20 @@ const availableFields = [
 ];
 ```
 
-### Com auto-mapeamento inteligente:
+### With smart auto-mapping:
 
 ```tsx
 const availableFields = [
 	{
-		field: "nome_completo",
-		label: "Nome Completo",
+		field: "full_name",
+		label: "Full Name",
 		dataType: "string",
 		required: true,
 		columnCandidates: ["nome", "name", "fullname", "full_name"],
 	},
 	{
-		field: "email_principal",
-		label: "Email Principal",
+		field: "primary_email",
+		label: "Primary Email",
 		dataType: "email",
 		required: true,
 		columnCandidates: ["email", "e-mail", "mail", "email_principal"],
@@ -721,45 +643,45 @@ function SmartMappingExample() {
 	return (
 		<SpreadsheetUpload
 			availableFields={availableFields}
-			autoMap={true} // Habilita mapeamento automático
+			autoMap={true} // Enables automatic mapping
 			onDataProcessed={(data, mappings, validation, transformed) => {
-				// Mapeamento será feito automaticamente baseado nos columnCandidates
-				console.log("Mapeamento automático aplicado:", mappings);
+				// Mapping will be done automatically based on columnCandidates
+				console.log("Automatic mapping applied:", mappings);
 			}}
 		/>
 	);
 }
 ```
 
-## API de referência
+## API Reference
 
-### Constantes e utilitários
+### Constants and utilities
 
 ```tsx
-// Configurações padrão
+// Default configurations
 export const defaultTheme: ThemeConfig;
 export const defaultUploadOptions: UploadOptions;
 export const defaultI18nConfig: I18nConfig;
 
-// Utilitários
+// Utilities
 export const supportedFormats = [".csv", ".xlsx", ".ods"];
 export const maxFileSizeDefault = 10 * 1024 * 1024; // 10MB
 ```
 
-## Contribuição
+## Contribution
 
-Contribuições são bem-vindas! Por favor, siga estes passos:
+Contributions are welcome! Please follow these steps:
 
-1. Fork o projeto
-2. Crie uma branch para sua feature (`git checkout -b feature/nova-feature`)
-3. Commit suas mudanças (`git commit -m 'Adiciona nova feature'`)
-4. Push para a branch (`git push origin feature/nova-feature`)
-5. Abra um Pull Request
+1. Fork the project
+2. Create a branch for your feature (`git checkout -b feature/new-feature`)
+3. Commit your changes (`git commit -m 'Add new feature'`)
+4. Push to the branch (`git push origin feature/new-feature`)
+5. Open a Pull Request
 
-## Licença
+## License
 
-MIT - veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+MIT - see the [LICENSE](LICENSE) file for more details.
 
 ---
 
-Feito por [João Pedro (gepetojj)](https://github.com/gepetojj)
+Made by [João Pedro (gepetojj)](https://github.com/gepetojj)
