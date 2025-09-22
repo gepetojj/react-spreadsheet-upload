@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import { useCallback, useMemo, useState } from "react";
 
 import {
@@ -328,7 +329,7 @@ export function SpreadsheetUpload({
 		}
 
 		return (
-			<div className="rsu:flex rsu:items-center rsu:justify-between rsu:border-t rsu:mt-6 rsu:pt-4">
+			<div className="rsu:mt-6 rsu:flex rsu:items-center rsu:justify-between rsu:border-t rsu:pt-4">
 				<div>
 					{navigation.canGoBack && navigation.prevStep && (
 						<ButtonComponent
@@ -541,13 +542,15 @@ export function SpreadsheetUpload({
 
 	return (
 		<div
-			className={`rsu:mx-auto rsu:max-w-6xl rsu:p-6 rsu:w-full ${className} ${
-				customStyles.container || ""
-			}`}
+			className={clsx(
+				"rsu rsu:mx-auto rsu:w-full rsu:max-w-6xl rsu:p-6",
+				className,
+				customStyles.container
+			)}
 		>
 			{showSteps && (
 				<div className="rsu:mb-8 rsu:w-full">
-					<nav className="rsu:flex rsu:space-x-8 rsu:w-full">
+					<nav className="rsu:flex rsu:w-full rsu:space-x-8">
 						{steps.map((step: (typeof steps)[0], index: number) => (
 							<button
 								type="button"
@@ -598,12 +601,12 @@ export function SpreadsheetUpload({
 				</div>
 			)}
 
-			<div className="rsu:flex rsu:items-center rsu:justify-center rsu:min-h-[500px] rsu:w-full">
+			<div className="rsu:flex rsu:min-h-[500px] rsu:w-full rsu:items-center rsu:justify-center">
 				{renderStepContent()}
 			</div>
 
 			{data && (
-				<div className="rsu:border-t rsu:flex rsu:items-center rsu:justify-between rsu:mt-8 rsu:pt-4 rsu:w-full">
+				<div className="rsu:mt-8 rsu:flex rsu:w-full rsu:items-center rsu:justify-between rsu:border-t rsu:pt-4">
 					<div className="rsu:text-gray-500 rsu:text-sm">
 						{data.fileName} • {data.totalRows} linhas •{" "}
 						{data.totalColumns} colunas

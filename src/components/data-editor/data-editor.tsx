@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import type React from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
@@ -308,9 +309,11 @@ export function DataEditor({
 
 	return (
 		<div
-			className={`rsu:w-full rsu:space-y-4 ${className} ${
-				customStyles.container || ""
-			}`}
+			className={clsx(
+				"rsu rsu:w-full rsu:space-y-4",
+				className,
+				customStyles.container
+			)}
 		>
 			<div className="rsu:flex rsu:items-center rsu:justify-between">
 				<div className="rsu:flex rsu:items-center rsu:space-x-4">
@@ -318,7 +321,7 @@ export function DataEditor({
 						{t("editor.title")}
 					</h3>
 					<div className="rsu:flex rsu:items-center rsu:space-x-2">
-						<span className="rsu:text-sm rsu:font-medium rsu:text-gray-700">
+						<span className="rsu:font-medium rsu:text-gray-700 rsu:text-sm">
 							{t("editor.filterLabel")}
 						</span>
 						<SelectComponent
@@ -328,7 +331,7 @@ export function DataEditor({
 									e.target.value as RowFilterType
 								)
 							}
-							className={`rsu:block rsu:rounded-md rsu:border-gray-300 rsu:shadow-sm rsu:focus:border-blue-500 rsu:focus:ring-blue-500 rsu:text-sm ${
+							className={`rsu:block rsu:rounded-md rsu:border-gray-300 rsu:text-sm rsu:shadow-sm rsu:focus:border-blue-500 rsu:focus:ring-blue-500 ${
 								customStyles.select || ""
 							}`}
 						>

@@ -75,9 +75,11 @@ export function Preview({
 
 	return (
 		<div
-			className={`rsu:w-full rsu:space-y-4 ${className} ${
-				customStyles.container || ""
-			}`}
+			className={clsx(
+				"rsu rsu:w-full rsu:space-y-4",
+				className,
+				customStyles.container
+			)}
 		>
 			{showFileInfo && (
 				<div className="rsu:space-y-2 rsu:rounded-lg rsu:bg-gray-50 rsu:p-4">

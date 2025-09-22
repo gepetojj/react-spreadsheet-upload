@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import { useCallback, useMemo } from "react";
 
 import { useI18n } from "../../i18n";
@@ -123,9 +124,11 @@ export function ColumnMapping({
 
 	return (
 		<div
-			className={`rsu:w-full rsu:space-y-6 ${className} ${
-				customStyles.container || ""
-			}`}
+			className={clsx(
+				"rsu rsu:w-full rsu:space-y-6",
+				className,
+				customStyles.container
+			)}
 		>
 			<div className="rsu:flex rsu:items-center rsu:justify-between">
 				<div>

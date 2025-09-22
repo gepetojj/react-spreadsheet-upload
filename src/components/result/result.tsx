@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import { useMemo } from "react";
 
 import { useI18n } from "../../i18n";
@@ -48,7 +49,10 @@ export function Result({
 
 	return (
 		<div
-			className={`rsu:w-full rsu:space-y-8 rsu:text-center ${className}`}
+			className={clsx(
+				"rsu rsu:w-full rsu:space-y-8 rsu:text-center",
+				className
+			)}
 		>
 			{/* Success Icon */}
 			<div className="rsu:mx-auto rsu:flex rsu:h-24 rsu:w-24 rsu:items-center rsu:justify-center rsu:rounded-full rsu:bg-green-100">
@@ -71,46 +75,9 @@ export function Result({
 
 			{/* Title */}
 			<div>
-				<h3 className="rsu:mb-2 rsu:text-2xl rsu:font-bold rsu:text-gray-900">
+				<h3 className="rsu:mb-2 rsu:font-bold rsu:text-2xl rsu:text-gray-900">
 					{t("result.title")}
 				</h3>
-				<p className="rsu:text-gray-600">{t("result.subtitle")}</p>
-			</div>
-
-			{/* Statistics */}
-			<div className="rsu:grid rsu:grid-cols-2 rsu:gap-6 rsu:md:grid-cols-4">
-				<div className="rsu:rounded-lg rsu:bg-blue-50 rsu:p-4">
-					<div className="rsu:text-blue-600 rsu:text-sm rsu:font-medium">
-						{t("result.totalRows")}
-					</div>
-					<div className="rsu:text-blue-800 rsu:text-2xl rsu:font-bold">
-						{stats.totalRows}
-					</div>
-				</div>
-				<div className="rsu:rounded-lg rsu:bg-green-50 rsu:p-4">
-					<div className="rsu:text-green-600 rsu:text-sm rsu:font-medium">
-						{t("result.totalFields")}
-					</div>
-					<div className="rsu:text-green-800 rsu:text-2xl rsu:font-bold">
-						{stats.totalFields}
-					</div>
-				</div>
-				<div className="rsu:rounded-lg rsu:bg-gray-50 rsu:p-4">
-					<div className="rsu:text-gray-600 rsu:text-sm rsu:font-medium">
-						{t("result.validRows")}
-					</div>
-					<div className="rsu:text-gray-800 rsu:text-2xl rsu:font-bold">
-						{stats.validRows}
-					</div>
-				</div>
-				<div className="rsu:rounded-lg rsu:bg-purple-50 rsu:p-4">
-					<div className="rsu:text-purple-600 rsu:text-sm rsu:font-medium">
-						{t("result.mappedFields")}
-					</div>
-					<div className="rsu:text-purple-800 rsu:text-2xl rsu:font-bold">
-						{stats.totalFields}
-					</div>
-				</div>
 			</div>
 
 			{/* Status Messages */}
@@ -133,7 +100,7 @@ export function Result({
 									d="M5 13l4 4L19 7"
 								/>
 							</svg>
-							<span className="rsu:text-green-800 rsu:font-medium">
+							<span className="rsu:font-medium rsu:text-green-800">
 								{t("result.allValid")}
 							</span>
 						</div>
@@ -158,7 +125,7 @@ export function Result({
 									d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.314 15.5c-.77.833.192 2.5 1.732 2.5z"
 								/>
 							</svg>
-							<span className="rsu:text-yellow-800 rsu:font-medium">
+							<span className="rsu:font-medium rsu:text-yellow-800">
 								{t("result.issuesFound", {
 									errors: stats.errorCount,
 									warnings: stats.warningCount,
@@ -183,12 +150,6 @@ export function Result({
 							{t("result.processedAt")}
 						</span>{" "}
 						{new Date().toLocaleString()}
-					</p>
-					<p>
-						<span className="rsu:font-medium">
-							{t("result.dataFormat")}
-						</span>{" "}
-						{t("result.mappedData")}
 					</p>
 				</div>
 			</div>

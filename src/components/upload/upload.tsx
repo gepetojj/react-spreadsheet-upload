@@ -100,9 +100,11 @@ export function Upload({
 
 	return (
 		<div
-			className={`rsu:relative rsu:flex rsu:w-full rsu:items-center rsu:justify-center ${className} ${
-				customStyles.container || ""
-			}`}
+			className={clsx(
+				"rsu rsu:relative rsu:flex rsu:w-full rsu:items-center rsu:justify-center",
+				className,
+				customStyles.container
+			)}
 		>
 			<button
 				type="button"
@@ -112,7 +114,8 @@ export function Upload({
 						"rsu:cursor-not-allowed rsu:opacity-50": disabled,
 						"rsu:pointer-events-none": loading,
 						"rsu:border-red-300 rsu:bg-red-50": error,
-					}
+					},
+					customStyles.button
 				)}
 				onDragOver={handleDragOver}
 				onDragEnter={handleDragEnter}
@@ -156,10 +159,10 @@ export function Upload({
 
 						<ButtonComponent
 							type="button"
-							className={`rsu:inline-flex rsu:items-center rsu:rounded-md rsu:border rsu:border-transparent rsu:bg-blue-600 rsu:px-4 rsu:py-2 rsu:font-medium rsu:text-sm rsu:text-white rsu:hover:bg-blue-700 rsu:focus:outline-none rsu:focus:ring-2 rsu:focus:ring-blue-500 rsu:focus:ring-offset-2 ${
-								customStyles.button || ""
-							}
-              `}
+							className={clsx(
+								"rsu:inline-flex rsu:items-center rsu:rounded-md rsu:border rsu:border-transparent rsu:bg-blue-600 rsu:px-4 rsu:py-2 rsu:font-medium rsu:text-sm rsu:text-white rsu:hover:bg-blue-700 rsu:focus:outline-none rsu:focus:ring-2 rsu:focus:ring-blue-500 rsu:focus:ring-offset-2",
+								customStyles.button
+							)}
 							disabled={disabled}
 						>
 							{t("upload.browse")}

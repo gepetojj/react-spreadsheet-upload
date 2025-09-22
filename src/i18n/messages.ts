@@ -81,19 +81,11 @@ export const messages = {
 
 		// Result
 		"result.title": "Upload Concluído!",
-		"result.subtitle":
-			"Seus dados foram processados e estão prontos para uso",
 		"result.finish": "Finalizar",
-		"result.totalRows": "Linhas Processadas",
-		"result.totalFields": "Campos Mapeados",
-		"result.validRows": "Dados Válidos",
-		"result.mappedFields": "Campos Configurados",
 		"result.allValid": "Todos os dados foram validados com sucesso!",
 		"result.issuesFound": "Encontrados {errors} erros e {warnings} avisos",
 		"result.fileName": "Arquivo:",
 		"result.processedAt": "Processado em:",
-		"result.dataFormat": "Formato:",
-		"result.mappedData": "Dados Mapeados",
 
 		// Actions
 		"actions.upload": "Upload",
@@ -206,18 +198,11 @@ export const messages = {
 
 		// Result
 		"result.title": "Upload Complete!",
-		"result.subtitle": "Your data has been processed and is ready to use",
 		"result.finish": "Finish",
-		"result.totalRows": "Rows Processed",
-		"result.totalFields": "Fields Mapped",
-		"result.validRows": "Valid Data",
-		"result.mappedFields": "Fields Configured",
 		"result.allValid": "All data has been successfully validated!",
 		"result.issuesFound": "Found {errors} errors and {warnings} warnings",
 		"result.fileName": "File:",
 		"result.processedAt": "Processed at:",
-		"result.dataFormat": "Format:",
-		"result.mappedData": "Mapped Data",
 
 		// Actions
 		"actions.upload": "Upload",
