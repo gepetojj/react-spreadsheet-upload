@@ -406,4 +406,7 @@ export const messages = {
 } as const;
 
 export type Locale = keyof typeof messages;
-export type MessageKey = keyof (typeof messages)["pt-BR"];
+export type MessageKey =
+	| keyof (typeof messages)["pt-BR"]
+	| keyof (typeof messages)["en-US"]
+	| keyof (typeof messages)["es-ES"];

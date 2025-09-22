@@ -6,7 +6,6 @@ import type {
 	ValidationResult,
 } from "../types";
 
-// Utility function to transform spreadsheet data to JSON
 function transformDataToJSON(
 	data: SpreadsheetData,
 	mappings: ColumnMapping[]
