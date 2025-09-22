@@ -123,7 +123,6 @@ export function SpreadsheetUpload({
 		setColumnMappings,
 		setLoading,
 		setError,
-		clearData,
 		updateCell,
 	} = useSpreadsheetData();
 
@@ -300,11 +299,6 @@ export function SpreadsheetUpload({
 		onDataProcessed,
 		transformedData,
 	]);
-
-	const handleClear = useCallback(() => {
-		clearData();
-		setCurrentStep("upload");
-	}, [clearData]);
 
 	const getAccessibleSteps = useCallback(() => {
 		const hasData = !!data;
