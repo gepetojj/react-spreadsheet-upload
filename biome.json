@@ -12,7 +12,8 @@
 			"!node_modules",
 			"!dist",
 			"!build",
-			"!package-lock.yaml"
+			"!package-lock.yaml",
+			"!**/*.css"
 		]
 	},
 	"formatter": {
@@ -25,7 +26,8 @@
 		"rules": {
 			"recommended": true,
 			"suspicious": {
-				"noUnknownAtRules": "off"
+				"noUnknownAtRules": "off",
+				"noArrayIndexKey": "warn"
 			},
 			"nursery": {
 				"useSortedClasses": "warn"
