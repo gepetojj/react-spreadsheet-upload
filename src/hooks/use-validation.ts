@@ -1,7 +1,9 @@
 import { useCallback } from "react";
 
+import { useI18n } from "../i18n";
 import type {
 	ColumnMapping,
+	I18nConfig,
 	SpreadsheetData,
 	ValidationResult,
 	ValidationRule,
@@ -26,7 +28,8 @@ export interface UseValidationReturn {
 	validateUrl: (value: string) => boolean;
 }
 
-export function useValidation(): UseValidationReturn {
+export function useValidation(i18n?: Partial<I18nConfig>): UseValidationReturn {
+	const { t } = useI18n(i18n?.locale as "pt-BR" | "en-US" | undefined);
 	const validateRequired = useCallback((value: unknown): boolean => {
 		return value !== null && value !== undefined && value !== "";
 	}, []);
@@ -175,41 +178,101 @@ export function useValidation(): UseValidationReturn {
 							row: rowIndex,
 							column: columnIndex,
 							field: mapping.targetField,
-							message: `${mapping.targetLabel} é obrigatório`,
+							message: `${mapping.targetLabel} ${t(
+								"validation.required"
+							)}`,
 							value: cell.value,
 						});
 					}
 
 					// Data type specific validations
 					if (
-						mapping?.dataType === "email" &&
-						cell.value &&
-						typeof cell.value === "string"
+						mapping?.dataType &&
+						cell.value !== null &&
+						cell.value !== undefined &&
+						cell.value !== ""
 					) {
-						if (!validateEmail(cell.value)) {
-							errors.push({
-								row: rowIndex,
-								column: columnIndex,
-								field: mapping.targetField,
-								message: "Formato de email inválido",
-								value: cell.value,
-							});
-						}
-					}
-
-					if (
-						mapping?.dataType === "url" &&
-						cell.value &&
-						typeof cell.value === "string"
-					) {
-						if (!validateUrl(cell.value)) {
-							errors.push({
-								row: rowIndex,
-								column: columnIndex,
-								field: mapping.targetField,
-								message: "Formato de URL inválido",
-								value: cell.value,
-							});
+						switch (mapping.dataType) {
+							case "number": {
+								const numValue = Number(cell.value);
+								if (Number.isNaN(numValue)) {
+									errors.push({
+										row: rowIndex,
+										column: columnIndex,
+										field: mapping.targetField,
+										message: t("validation.invalidNumber"),
+										value: cell.value,
+									});
+								}
+								break;
+							}
+							case "boolean": {
+								const strValue = String(cell.value)
+									.toLowerCase()
+									.trim();
+								if (
+									![
+										"true",
+										"false",
+										"1",
+										"0",
+										"sim",
+										"não",
+										"yes",
+										"no",
+									].includes(strValue)
+								) {
+									errors.push({
+										row: rowIndex,
+										column: columnIndex,
+										field: mapping.targetField,
+										message: t("validation.invalidBoolean"),
+										value: cell.value,
+									});
+								}
+								break;
+							}
+							case "date": {
+								const dateValue = new Date(String(cell.value));
+								if (Number.isNaN(dateValue.getTime())) {
+									errors.push({
+										row: rowIndex,
+										column: columnIndex,
+										field: mapping.targetField,
+										message: t("validation.invalidDate"),
+										value: cell.value,
+									});
+								}
+								break;
+							}
+							case "email":
+								if (
+									typeof cell.value === "string" &&
+									!validateEmail(cell.value)
+								) {
+									errors.push({
+										row: rowIndex,
+										column: columnIndex,
+										field: mapping.targetField,
+										message: t("validation.invalidEmail"),
+										value: cell.value,
+									});
+								}
+								break;
+							case "url":
+								if (
+									typeof cell.value === "string" &&
+									!validateUrl(cell.value)
+								) {
+									errors.push({
+										row: rowIndex,
+										column: columnIndex,
+										field: mapping.targetField,
+										message: t("validation.invalidUrl"),
+										value: cell.value,
+									});
+								}
+								break;
 						}
 					}
 				});
@@ -221,7 +284,7 @@ export function useValidation(): UseValidationReturn {
 				warnings,
 			};
 		},
-		[validateCell, validateRequired, validateEmail, validateUrl]
+		[validateCell, validateRequired, validateEmail, validateUrl, t]
 	);
 
 	return {

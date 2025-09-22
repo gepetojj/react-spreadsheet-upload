@@ -20,10 +20,11 @@ export interface DataEditorProps extends CustomizableComponentProps {
 	maxColumns?: number;
 	showRowNumbers?: boolean;
 	showColumnHeaders?: boolean;
-	showErrorsOnly?: boolean;
-	onShowErrorsOnlyChange?: (showErrorsOnly: boolean) => void;
+	validationResult?: import("../../types").ValidationResult;
 	i18n?: Partial<I18nConfig>;
 }
+
+type RowFilterType = "all" | "errorsOnly";
 
 export function DataEditor({
 	data,
@@ -35,8 +36,7 @@ export function DataEditor({
 	maxColumns = 20,
 	showRowNumbers = true,
 	showColumnHeaders = true,
-	showErrorsOnly = false,
-	onShowErrorsOnlyChange,
+	validationResult,
 	i18n,
 	className = "",
 	customComponents = {},
@@ -48,12 +48,35 @@ export function DataEditor({
 		column: number;
 	} | null>(null);
 	const [editValue, setEditValue] = useState<string>("");
+	const [rowFilter, setRowFilter] = useState<RowFilterType>("all");
 	// const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
 	const inputRef = useRef<HTMLInputElement>(null);
 
-	const ButtonComponent = customComponents.Button || "button";
 	const TableComponent = customComponents.Table || "table";
 	const InputComponent = customComponents.Input || "input";
+	const SelectComponent = customComponents.Select || "select";
+
+	const getErrorRows = useCallback(() => {
+		if (!validationResult) {
+			return new Set(
+				data.rows
+					.map((row, index) => ({ row, index }))
+					.filter(({ row }) =>
+						row.some((cell) => cell.isValid === false)
+					)
+					.map(({ index }) => index)
+			);
+		}
+
+		const errorRows = new Set<number>();
+		validationResult.errors.forEach((error) => {
+			errorRows.add(error.row);
+		});
+		return errorRows;
+	}, [validationResult, data.rows]);
+
+	const errorRows = getErrorRows();
+	const errorRowCount = errorRows.size;
 
 	// Create mapped data for display
 	const mappedData = useMemo(() => {
@@ -80,53 +103,64 @@ export function DataEditor({
 		};
 	}, [data.rows, mappings, maxRows, maxColumns]);
 
-	// Filter rows that contain errors (based on original data)
+	// Filter rows based on the selected filter (based on original data)
 	const getFilteredRows = useCallback(() => {
-		if (!showErrorsOnly) {
+		if (rowFilter === "all") {
 			return mappedData.rows;
 		}
 
-		const errorRows = data.rows
-			.map((row, index) => ({ row, index }))
-			.filter(({ row }) => row.some((cell) => cell.isValid === false))
-			.slice(0, maxRows);
+		if (rowFilter === "errorsOnly") {
+			// Get all row indices that have errors
+			const allErrorRowIndices = Array.from(errorRows);
 
-		return errorRows.map(({ row }) => {
-			return mappings
-				.slice(0, maxColumns)
-				.map((mapping: ColumnMappingType) => {
-					const originalCell = row[mapping.sourceIndex];
-					return {
-						...originalCell,
-						error: originalCell?.error
-							? `${originalCell.error} (Campo: ${mapping.targetLabel})`
-							: originalCell?.error,
-					};
-				});
-		});
+			// Take only the first maxRows error rows
+			const errorRowIndices = allErrorRowIndices.slice(0, maxRows);
+
+			// Map the error rows to display format
+			return errorRowIndices.map((rowIndex) => {
+				const row = data.rows[rowIndex];
+				return mappings
+					.slice(0, maxColumns)
+					.map((mapping: ColumnMappingType) => {
+						const originalCell = row[mapping.sourceIndex];
+						return {
+							...originalCell,
+							error: originalCell?.error
+								? `${originalCell.error} (Campo: ${mapping.targetLabel})`
+								: originalCell?.error,
+						};
+					});
+			});
+		}
+
+		return mappedData.rows;
 	}, [
 		mappedData.rows,
-		showErrorsOnly,
+		rowFilter,
 		data.rows,
 		mappings,
 		maxRows,
 		maxColumns,
+		errorRows,
 	]);
 
 	// Get original row indices for filtered rows
 	const getOriginalRowIndices = useCallback(() => {
-		if (!showErrorsOnly) {
-			return Array.from({ length: mappedData.rows.length }, (_, i) => i);
+		if (rowFilter === "all") {
+			// For "all" filter, we show the first maxRows rows
+			return Array.from(
+				{ length: Math.min(maxRows, data.rows.length) },
+				(_, i) => i
+			);
 		}
 
-		const errorRows = data.rows
-			.map((row: CellData[], index: number) => ({ row, index }))
-			.filter(({ row }) =>
-				row.some((cell: CellData) => cell.isValid === false)
-			);
+		if (rowFilter === "errorsOnly") {
+			// Return indices of the first maxRows error rows
+			return Array.from(errorRows).slice(0, maxRows);
+		}
 
-		return errorRows.slice(0, maxRows).map(({ index }) => index);
-	}, [data.rows, showErrorsOnly, maxRows, mappedData.rows.length]);
+		return [];
+	}, [data.rows, rowFilter, maxRows, errorRows]);
 
 	const displayData = {
 		headers: mappedData.headers,
@@ -134,16 +168,9 @@ export function DataEditor({
 		originalIndices: getOriginalRowIndices(),
 	};
 
-	const handleToggleShowErrorsOnly = useCallback(() => {
-		const newShowErrorsOnly = !showErrorsOnly;
-		if (onShowErrorsOnlyChange) {
-			onShowErrorsOnlyChange(newShowErrorsOnly);
-		}
-	}, [showErrorsOnly, onShowErrorsOnlyChange]);
-
-	const errorRowCount = data.rows.filter((row) =>
-		row.some((cell) => cell.isValid === false)
-	).length;
+	const handleRowFilterChange = useCallback((newFilter: RowFilterType) => {
+		setRowFilter(newFilter);
+	}, []);
 
 	useEffect(() => {
 		if (editingCell && inputRef.current) {
@@ -157,13 +184,14 @@ export function DataEditor({
 			if (!editable) return;
 
 			// Convert display row to original row index
-			const originalRow = showErrorsOnly
-				? displayData.originalIndices[displayRow]
-				: displayRow;
+			const originalRow =
+				rowFilter !== "all"
+					? displayData.originalIndices[displayRow]
+					: displayRow;
 			setEditingCell({ row: originalRow, column });
 			setEditValue(cell.formatted || "");
 		},
-		[editable, showErrorsOnly, displayData.originalIndices]
+		[editable, rowFilter, displayData.originalIndices]
 	);
 
 	const handleCellDoubleClick = useCallback(
@@ -171,13 +199,14 @@ export function DataEditor({
 			if (!editable) return;
 
 			// Convert display row to original row index
-			const originalRow = showErrorsOnly
-				? displayData.originalIndices[displayRow]
-				: displayRow;
+			const originalRow =
+				rowFilter !== "all"
+					? displayData.originalIndices[displayRow]
+					: displayRow;
 			setEditingCell({ row: originalRow, column });
 			setEditValue(cell.formatted || "");
 		},
-		[editable, showErrorsOnly, displayData.originalIndices]
+		[editable, rowFilter, displayData.originalIndices]
 	);
 
 	const handleInputChange = useCallback(
@@ -288,46 +317,32 @@ export function DataEditor({
 					<h3 className="rsu:font-semibold rsu:text-gray-900 rsu:text-lg">
 						{t("editor.title")}
 					</h3>
-					{errorRowCount > 0 && (
-						<div className="rsu:flex rsu:items-center rsu:space-x-2">
-							<ButtonComponent
-								type="button"
-								onClick={handleToggleShowErrorsOnly}
-								className={`rsu:inline-flex rsu:items-center rsu:rounded-md rsu:border rsu:px-3 rsu:py-1 rsu:font-medium rsu:text-sm ${
-									showErrorsOnly
-										? "rsu:border-red-300 rsu:bg-red-50 rsu:text-red-700"
-										: "rsu:border-gray-300 rsu:bg-white rsu:text-gray-700 rsu:hover:bg-gray-50"
-								}`}
-							>
-								<svg
-									className="rsu:mr-1 rsu:h-4 rsu:w-4"
-									fill="none"
-									stroke="currentColor"
-									viewBox="0 0 24 24"
-									aria-label="Error"
-								>
-									<title>Error</title>
-									<path
-										strokeLinecap="round"
-										strokeLinejoin="round"
-										strokeWidth={2}
-										d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.314 15.5c-.77.833.192 2.5 1.732 2.5z"
-									/>
-								</svg>
-								{showErrorsOnly
-									? t("editor.hideErrors")
-									: t("editor.showErrorsOnly")}
-							</ButtonComponent>
-							<span className="rsu:font-medium rsu:text-red-600 rsu:text-sm">
-								{errorRowCount}{" "}
-								{errorRowCount === 1
-									? "linha com erro"
-									: "linhas com erro"}
-							</span>
-						</div>
-					)}
+					<div className="rsu:flex rsu:items-center rsu:space-x-2">
+						<span className="rsu:text-sm rsu:font-medium rsu:text-gray-700">
+							{t("editor.filterLabel")}
+						</span>
+						<SelectComponent
+							value={rowFilter}
+							onChange={(e) =>
+								handleRowFilterChange(
+									e.target.value as RowFilterType
+								)
+							}
+							className={`rsu:block rsu:rounded-md rsu:border-gray-300 rsu:shadow-sm rsu:focus:border-blue-500 rsu:focus:ring-blue-500 rsu:text-sm ${
+								customStyles.select || ""
+							}`}
+						>
+							<option value="all">
+								{t("editor.filter.all")}
+							</option>
+							<option value="errorsOnly">
+								{t("editor.filter.errorsOnly")}
+								{errorRowCount > 0 && ` (${errorRowCount})`}
+							</option>
+						</SelectComponent>
+					</div>
 				</div>
-				{editable && !showErrorsOnly && (
+				{editable && rowFilter === "all" && (
 					<div className="rsu:text-gray-500 rsu:text-sm">
 						Clique em uma célula para editar
 					</div>
@@ -367,11 +382,12 @@ export function DataEditor({
 						{displayData.rows.map(
 							(row: CellData[], displayRowIndex: number) => {
 								// Get original row index
-								const originalRowIndex = showErrorsOnly
-									? displayData.originalIndices[
-											displayRowIndex
-									  ]
-									: displayRowIndex;
+								const originalRowIndex =
+									rowFilter !== "all"
+										? displayData.originalIndices[
+												displayRowIndex
+										  ]
+										: displayRowIndex;
 
 								return (
 									<tr
@@ -475,10 +491,10 @@ export function DataEditor({
 
 			{(data.totalRows > maxRows ||
 				data.totalColumns > maxColumns ||
-				showErrorsOnly) && (
+				rowFilter !== "all") && (
 				<div className="rsu:text-center rsu:text-gray-500 rsu:text-sm">
 					<p>
-						{showErrorsOnly
+						{rowFilter === "errorsOnly"
 							? `Exibindo ${displayData.rows.length} linha(s) com erro de ${errorRowCount} total(is)`
 							: `Exibindo ${maxRows} de ${data.totalRows} linhas e ${maxColumns} de ${data.totalColumns} colunas`}
 					</p>

@@ -59,6 +59,13 @@ export const messages = {
 		"validation.field": "Campo: {field}",
 		"validation.message": "Mensagem: {message}",
 		"validation.value": "Valor: {value}",
+		"validation.required": "é obrigatório",
+		"validation.invalidNumber": "Valor deve ser um número válido",
+		"validation.invalidBoolean":
+			"Valor deve ser verdadeiro/falso ou sim/não",
+		"validation.invalidDate": "Formato de data inválido",
+		"validation.invalidEmail": "Formato de email inválido",
+		"validation.invalidUrl": "Formato de URL inválido",
 
 		// Editor
 		"editor.title": "Editor de Dados Mapeados",
@@ -68,6 +75,9 @@ export const messages = {
 		"editor.invalidValue": "Valor inválido",
 		"editor.showErrorsOnly": "Mostrar Apenas Erros",
 		"editor.hideErrors": "Mostrar Tudo",
+		"editor.filterLabel": "Filtrar linhas:",
+		"editor.filter.all": "Todas as linhas",
+		"editor.filter.errorsOnly": "Apenas linhas com erros",
 
 		// Result
 		"result.title": "Upload Concluído!",
@@ -175,6 +185,12 @@ export const messages = {
 		"validation.field": "Field: {field}",
 		"validation.message": "Message: {message}",
 		"validation.value": "Value: {value}",
+		"validation.required": "is required",
+		"validation.invalidNumber": "Value must be a valid number",
+		"validation.invalidBoolean": "Value must be true/false or yes/no",
+		"validation.invalidDate": "Invalid date format",
+		"validation.invalidEmail": "Invalid email format",
+		"validation.invalidUrl": "Invalid URL format",
 
 		// Editor
 		"editor.title": "Mapped Data Editor",
@@ -184,6 +200,9 @@ export const messages = {
 		"editor.invalidValue": "Invalid value",
 		"editor.showErrorsOnly": "Show Errors Only",
 		"editor.hideErrors": "Show All",
+		"editor.filterLabel": "Filter rows:",
+		"editor.filter.all": "All rows",
+		"editor.filter.errorsOnly": "Rows with errors only",
 
 		// Result
 		"result.title": "Upload Complete!",

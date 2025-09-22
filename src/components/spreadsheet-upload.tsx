@@ -58,7 +58,6 @@ export function SpreadsheetUpload({
 	const [currentStep, setCurrentStep] = useState<
 		"upload" | "preview" | "mapping" | "validation" | "editor" | "result"
 	>("upload");
-	const [showErrorsOnly, setShowErrorsOnly] = useState(false);
 
 	const {
 		data,
@@ -77,7 +76,7 @@ export function SpreadsheetUpload({
 	} = useSpreadsheetData();
 
 	const { parseFile } = useFileParser();
-	const { validateData } = useValidationHook();
+	const { validateData } = useValidationHook(i18n);
 	const { t } = useI18n(i18n?.locale as "pt-BR" | "en-US" | undefined);
 
 	const handleFileSelect = useCallback(
@@ -205,28 +204,63 @@ export function SpreadsheetUpload({
 		setCurrentStep("upload");
 	}, [clearData]);
 
+	// Determine which steps are accessible based on current progress
+	const getAccessibleSteps = useCallback(() => {
+		const hasData = !!data;
+		const hasMappings = columnMappings.length > 0;
+
+		return {
+			upload: true, // Always accessible
+			preview: hasData,
+			mapping: hasData,
+			validation: hasData && hasMappings,
+			editor: hasData,
+			result: hasData && hasMappings,
+		};
+	}, [data, columnMappings]);
+
+	const accessibleSteps = getAccessibleSteps();
+
 	const steps = useMemo(
 		() => [
-			{ key: "upload", label: t("actions.upload"), completed: !!data },
-			{ key: "preview", label: t("actions.preview"), completed: !!data },
+			{
+				key: "upload",
+				label: t("actions.upload"),
+				completed: !!data,
+				accessible: accessibleSteps.upload,
+			},
+			{
+				key: "preview",
+				label: t("actions.preview"),
+				completed: !!data,
+				accessible: accessibleSteps.preview,
+			},
 			{
 				key: "mapping",
 				label: t("actions.map"),
 				completed: columnMappings.length > 0,
+				accessible: accessibleSteps.mapping,
 			},
 			{
 				key: "validation",
 				label: t("actions.validate"),
 				completed: !!validationResult,
+				accessible: accessibleSteps.validation,
 			},
-			{ key: "editor", label: t("actions.edit"), completed: !!data },
+			{
+				key: "editor",
+				label: t("actions.edit"),
+				completed: !!data,
+				accessible: accessibleSteps.editor,
+			},
 			{
 				key: "result",
 				label: t("actions.result"),
 				completed: !!data && columnMappings.length > 0,
+				accessible: accessibleSteps.result,
 			},
 		],
-		[t, data, columnMappings, validationResult]
+		[t, data, columnMappings, validationResult, accessibleSteps]
 	);
 
 	// Navigation logic
@@ -294,7 +328,7 @@ export function SpreadsheetUpload({
 		}
 
 		return (
-			<div className="rsu:border-t rsu:flex rsu:items-center rsu:justify-between rsu:mt-6 rsu:pt-4">
+			<div className="rsu:flex rsu:items-center rsu:justify-between rsu:border-t rsu:mt-6 rsu:pt-4">
 				<div>
 					{navigation.canGoBack && navigation.prevStep && (
 						<ButtonComponent
@@ -304,7 +338,7 @@ export function SpreadsheetUpload({
 									navigation.prevStep as typeof currentStep
 								)
 							}
-							className="rsu:border rsu:border-gray-300 rsu:bg-white rsu:hover:bg-gray-50 rsu:inline-flex rsu:items-center rsu:font-medium rsu:px-4 rsu:py-2 rsu:rounded-md rsu:text-gray-700 rsu:text-sm"
+							className="rsu:inline-flex rsu:items-center rsu:rounded-md rsu:border rsu:border-gray-300 rsu:bg-white rsu:px-4 rsu:py-2 rsu:font-medium rsu:text-gray-700 rsu:text-sm rsu:hover:bg-gray-50"
 						>
 							<svg
 								className="rsu:mr-2 rsu:h-4 rsu:w-4"
@@ -331,7 +365,7 @@ export function SpreadsheetUpload({
 						<ButtonComponent
 							type="button"
 							onClick={() => setCurrentStep("result")}
-							className="rsu:border rsu:border-gray-300 rsu:bg-gray-100 rsu:hover:bg-gray-200 rsu:inline-flex rsu:items-center rsu:font-medium rsu:px-4 rsu:py-2 rsu:rounded-md rsu:text-gray-500 rsu:text-sm"
+							className="rsu:inline-flex rsu:items-center rsu:rounded-md rsu:border rsu:border-gray-300 rsu:bg-gray-100 rsu:px-4 rsu:py-2 rsu:font-medium rsu:text-gray-500 rsu:text-sm rsu:hover:bg-gray-200"
 						>
 							{t("navigation.skip")}
 						</ButtonComponent>
@@ -345,7 +379,7 @@ export function SpreadsheetUpload({
 									navigation.nextStep as typeof currentStep
 								)
 							}
-							className="rsu:border rsu:border-transparent rsu:bg-blue-600 rsu:hover:bg-blue-700 rsu:inline-flex rsu:items-center rsu:font-medium rsu:px-4 rsu:py-2 rsu:rounded-md rsu:text-sm rsu:text-white"
+							className="rsu:inline-flex rsu:items-center rsu:rounded-md rsu:border rsu:border-transparent rsu:bg-blue-600 rsu:px-4 rsu:py-2 rsu:font-medium rsu:text-sm rsu:text-white rsu:hover:bg-blue-700"
 						>
 							{t("navigation.next")}
 							<svg
@@ -459,13 +493,12 @@ export function SpreadsheetUpload({
 						<DataEditor
 							data={data}
 							mappings={columnMappings}
+							validationResult={validationResult || undefined}
 							i18n={i18n}
 							onDataChange={handleDataChange}
 							onCellEdit={(row, column, value) => {
 								updateCell(row, column, value);
 							}}
-							showErrorsOnly={showErrorsOnly}
-							onShowErrorsOnlyChange={setShowErrorsOnly}
 							customComponents={customComponents}
 							customStyles={customStyles}
 						/>
@@ -519,19 +552,24 @@ export function SpreadsheetUpload({
 							<button
 								type="button"
 								key={step.key}
-								onClick={() =>
-									setCurrentStep(
-										step.key as
-											| "upload"
-											| "preview"
-											| "mapping"
-											| "validation"
-											| "editor"
-											| "result"
-									)
-								}
+								onClick={() => {
+									if (step.accessible) {
+										setCurrentStep(
+											step.key as
+												| "upload"
+												| "preview"
+												| "mapping"
+												| "validation"
+												| "editor"
+												| "result"
+										);
+									}
+								}}
+								disabled={!step.accessible}
 								className={`rsu:flex rsu:items-center rsu:space-x-2 rsu:border-b-2 rsu:px-3 rsu:py-2 rsu:font-medium rsu:text-sm rsu:transition-colors ${
-									currentStep === step.key
+									!step.accessible
+										? "rsu:cursor-not-allowed rsu:opacity-50"
+										: currentStep === step.key
 										? "rsu:border-blue-600 rsu:text-blue-600"
 										: step.completed
 										? "rsu:border-green-600 rsu:text-green-600 rsu:hover:text-green-700"
@@ -541,7 +579,9 @@ export function SpreadsheetUpload({
 							>
 								<div
 									className={`rsu:flex rsu:h-6 rsu:w-6 rsu:items-center rsu:justify-center rsu:rounded-full rsu:font-bold rsu:text-xs ${
-										currentStep === step.key
+										!step.accessible
+											? "rsu:bg-gray-50 rsu:text-gray-400"
+											: currentStep === step.key
 											? "rsu:bg-blue-100 rsu:text-blue-600"
 											: step.completed
 											? "rsu:bg-green-100 rsu:text-green-600"
