@@ -8,6 +8,7 @@ import {
 } from "../hooks";
 import { useI18n } from "../i18n";
 import type {
+	AvailableField,
 	ColumnMapping as ColumnMappingType,
 	CustomizableComponentProps,
 	I18nConfig,
@@ -31,11 +32,7 @@ export interface SpreadsheetUploadProps extends CustomizableComponentProps {
 		transformedData: Record<string, unknown>[] | null
 	) => void;
 	uploadOptions?: Partial<UploadOptions>;
-	availableFields?: Array<{
-		field: string;
-		label: string;
-		dataType: ColumnMappingType["dataType"];
-	}>;
+	availableFields?: AvailableField[];
 	theme?: Partial<ThemeConfig>;
 	i18n?: Partial<I18nConfig>;
 	showSteps?: boolean;
@@ -90,18 +87,66 @@ export function SpreadsheetUpload({
 				setData(parsedData);
 
 				if (autoMap && availableFields.length > 0) {
-					// Auto-map columns based on available fields
 					const autoMappings: ColumnMappingType[] = [];
 
+					const matchesField = (
+						header: string,
+						field: AvailableField
+					): boolean => {
+						const normalize = (str: string) =>
+							str
+								.toLowerCase()
+								.trim()
+								.normalize("NFD")
+								.replace(/[\u0300-\u036f]/g, "")
+								.replace(/[^\w\s-]/g, "")
+								.replace(/\s+/g, " ");
+
+						const headerNormalized = normalize(header);
+						const labelNormalized = normalize(field.label);
+
+						if (labelNormalized === headerNormalized) {
+							return true;
+						}
+
+						if (field.columnCandidates) {
+							const exactCandidateMatch =
+								field.columnCandidates.some(
+									(candidate) =>
+										normalize(candidate) ===
+										headerNormalized
+								);
+							if (exactCandidateMatch) return true;
+
+							const partialCandidateMatch =
+								field.columnCandidates.some((candidate) => {
+									const candidateNormalized =
+										normalize(candidate);
+									return (
+										candidateNormalized.includes(
+											headerNormalized
+										) ||
+										headerNormalized.includes(
+											candidateNormalized
+										)
+									);
+								});
+							if (partialCandidateMatch) return true;
+						}
+
+						if (
+							labelNormalized.includes(headerNormalized) ||
+							headerNormalized.includes(labelNormalized)
+						) {
+							return true;
+						}
+
+						return false;
+					};
+
 					parsedData.headers.forEach((header, index) => {
-						const matchingField = availableFields.find(
-							(field) =>
-								field.label
-									.toLowerCase()
-									.includes(header.toLowerCase()) ||
-								header
-									.toLowerCase()
-									.includes(field.label.toLowerCase())
+						const matchingField = availableFields.find((field) =>
+							matchesField(header, field)
 						);
 
 						if (matchingField) {
@@ -116,7 +161,6 @@ export function SpreadsheetUpload({
 							});
 						}
 					});
-
 					setColumnMappings(autoMappings);
 				}
 
@@ -208,13 +252,12 @@ export function SpreadsheetUpload({
 		setCurrentStep("upload");
 	}, [clearData]);
 
-	// Determine which steps are accessible based on current progress
 	const getAccessibleSteps = useCallback(() => {
 		const hasData = !!data;
 		const hasMappings = columnMappings.length > 0;
 
 		return {
-			upload: true, // Always accessible
+			upload: true,
 			preview: hasData,
 			mapping: hasData,
 			validation: hasData && hasMappings,
@@ -267,16 +310,13 @@ export function SpreadsheetUpload({
 		[t, data, columnMappings, validationResult, accessibleSteps]
 	);
 
-	// Navigation logic
 	const getNavigationState = useCallback(() => {
 		const currentIndex = steps.findIndex(
 			(step: (typeof steps)[0]) => step.key === currentStep
 		);
 
-		// Can go back: if not on first step
 		const canGoBack = currentIndex > 0;
 
-		// Can go forward: if current step is completed or has data
 		let canGoForward = false;
 		switch (currentStep) {
 			case "upload":

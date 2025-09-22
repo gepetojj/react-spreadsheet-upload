@@ -133,6 +133,13 @@ export interface ComponentProps {
 	children?: React.ReactNode;
 }
 
+export interface AvailableField {
+	field: string;
+	label: string;
+	dataType: ColumnMapping["dataType"];
+	columnCandidates?: string[];
+}
+
 export interface CustomizableComponentProps extends ComponentProps {
 	customComponents?: {
 		Button?: React.ComponentType<

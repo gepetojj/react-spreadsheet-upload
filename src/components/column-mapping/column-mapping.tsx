@@ -3,6 +3,7 @@ import { useCallback, useMemo } from "react";
 
 import { useI18n } from "../../i18n";
 import type {
+	AvailableField,
 	ColumnMapping as ColumnMappingType,
 	CustomizableComponentProps,
 	I18nConfig,
@@ -13,11 +14,7 @@ export interface ColumnMappingProps extends CustomizableComponentProps {
 	data: SpreadsheetData;
 	mappings: ColumnMappingType[];
 	onMappingsChange: (mappings: ColumnMappingType[]) => void;
-	availableFields?: Array<{
-		field: string;
-		label: string;
-		dataType: ColumnMappingType["dataType"];
-	}>;
+	availableFields?: AvailableField[];
 	autoMapEnabled?: boolean;
 	i18n?: Partial<I18nConfig>;
 }
@@ -94,16 +91,67 @@ export function ColumnMapping({
 	);
 
 	const handleAutoMap = useCallback(() => {
-		if (!autoMapEnabled) return;
+		if (!autoMapEnabled || availableFields.length === 0) return;
 
 		const autoMappings: ColumnMappingType[] = [];
 
+		// Helper function to check if header matches field candidates
+		const matchesField = (
+			header: string,
+			field: AvailableField
+		): boolean => {
+			// Normalize strings: trim, lowercase, remove accents, and replace multiple spaces
+			const normalize = (str: string) =>
+				str
+					.toLowerCase()
+					.trim()
+					.normalize("NFD")
+					.replace(/[\u0300-\u036f]/g, "") // Remove accents
+					.replace(/[^\w\s-]/g, "") // Remove special chars except spaces and hyphens
+					.replace(/\s+/g, " ");
+
+			const headerNormalized = normalize(header);
+			const labelNormalized = normalize(field.label);
+
+			// Priority 1: Exact match with field label
+			if (labelNormalized === headerNormalized) {
+				return true;
+			}
+
+			// Priority 2: Check against column candidates (exact match first)
+			if (field.columnCandidates) {
+				const exactCandidateMatch = field.columnCandidates.some(
+					(candidate) => normalize(candidate) === headerNormalized
+				);
+				if (exactCandidateMatch) return true;
+
+				// Priority 3: Partial matches with candidates
+				const partialCandidateMatch = field.columnCandidates.some(
+					(candidate) => {
+						const candidateNormalized = normalize(candidate);
+						return (
+							candidateNormalized.includes(headerNormalized) ||
+							headerNormalized.includes(candidateNormalized)
+						);
+					}
+				);
+				if (partialCandidateMatch) return true;
+			}
+
+			// Priority 4: Partial match with field label
+			if (
+				labelNormalized.includes(headerNormalized) ||
+				headerNormalized.includes(labelNormalized)
+			) {
+				return true;
+			}
+
+			return false;
+		};
+
 		data.headers.forEach((header, index) => {
-			// Try to find a matching field
-			const matchingField = availableFields.find(
-				(field) =>
-					field.label.toLowerCase().includes(header.toLowerCase()) ||
-					header.toLowerCase().includes(field.label.toLowerCase())
+			const matchingField = availableFields.find((field) =>
+				matchesField(header, field)
 			);
 
 			if (matchingField) {

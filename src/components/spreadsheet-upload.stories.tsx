@@ -62,8 +62,28 @@ export const Default: Story = {
 			autoParse: true,
 		},
 		availableFields: [
-			{ field: "name", label: "Nome", dataType: "string" },
-			{ field: "email", label: "Email", dataType: "email" },
+			{
+				field: "name",
+				label: "Nome",
+				dataType: "string",
+				columnCandidates: [
+					"nome",
+					"name",
+					"nome completo",
+					"nome do cliente",
+				],
+			},
+			{
+				field: "email",
+				label: "Email",
+				dataType: "email",
+				columnCandidates: [
+					"email",
+					"e-mail",
+					"email address",
+					"correo",
+				],
+			},
 			{ field: "age", label: "Idade", dataType: "number" },
 			{ field: "active", label: "Ativo", dataType: "boolean" },
 			{
@@ -94,8 +114,30 @@ export const WithAutoMap: Story = {
 		...Default.args,
 		autoMap: true,
 		availableFields: [
-			{ field: "nome", label: "Nome Completo", dataType: "string" },
-			{ field: "email", label: "E-mail", dataType: "email" },
+			{
+				field: "nome",
+				label: "Nome Completo",
+				dataType: "string",
+				columnCandidates: [
+					"nome",
+					"name",
+					"nome completo",
+					"nome do cliente",
+					"cliente",
+				],
+			},
+			{
+				field: "email",
+				label: "E-mail",
+				dataType: "email",
+				columnCandidates: [
+					"email",
+					"e-mail",
+					"email address",
+					"correo",
+					"email do cliente",
+				],
+			},
 			{ field: "idade", label: "Idade", dataType: "number" },
 			{ field: "ativo", label: "Status Ativo", dataType: "boolean" },
 			{
