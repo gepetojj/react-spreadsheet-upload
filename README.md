@@ -2,6 +2,8 @@
 
 Biblioteca React completa para upload, visualização, mapeamento de colunas, validação e edição de dados de planilhas (CSV, XLSX). Focada em experiência do usuário fluida, customização total (temas, componentes, estilos) e responsividade nativa.
 
+![GIF demonstrando uso da biblioteca](https://github.com/gepetojj/react-spreadsheet-upload/raw/main/.github/blobs/demo.gif)
+
 ## Índice
 
 -   Conceitos rápidos
