@@ -6,7 +6,6 @@ Complete React library for spreadsheet data upload, preview, column mapping, val
 
 ## Table of Contents
 
--   Quick Concepts
 -   Installation
 -   Minimal Example (end-to-end)
 -   Main Types
@@ -19,19 +18,6 @@ Complete React library for spreadsheet data upload, preview, column mapping, val
 -   Advanced Examples
 -   API Reference
 -   Contribution and License
-
-## Quick Concepts
-
--   **Upload**: Drag & drop or browse with support for CSV, XLSX, ODS
--   **Preview**: Paginated preview with data preview before processing
--   **Column Mapping**: Intelligent column mapping to system fields
--   **Validation**: Automatic validation with customizable rules
--   **Data Editor**: Inline cell editing with real-time validation
--   **Result**: Final feedback with statistics and export options
--   **Theme**: Complete theme system with customizable colors, spacing, and components
--   **Responsive**: Native responsive design for mobile, tablet, and desktop
-
-Principles: minimal external dependencies (only papaparse, xlsx), strong typing, "fail fast" validation, controlled extensibility, mobile-first experience.
 
 ## Installation
 
