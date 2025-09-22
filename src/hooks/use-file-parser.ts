@@ -1,6 +1,4 @@
-import Papa from "papaparse";
 import { useCallback } from "react";
-import * as XLSX from "xlsx";
 
 import type { CellData, SpreadsheetData } from "../types";
 
@@ -13,6 +11,8 @@ export interface UseFileParserReturn {
 export function useFileParser(): UseFileParserReturn {
 	const parseCSV = useCallback(
 		async (file: File): Promise<SpreadsheetData> => {
+			const Papa = (await import("papaparse")).default;
+
 			return new Promise((resolve, reject) => {
 				Papa.parse(file, {
 					header: false,
@@ -33,7 +33,7 @@ export function useFileParser(): UseFileParserReturn {
 									formatted: cell || "",
 									type: "string" as const,
 									isValid: true,
-								}))
+								})),
 							);
 
 							const spreadsheetData: SpreadsheetData = {
@@ -53,17 +53,21 @@ export function useFileParser(): UseFileParserReturn {
 					},
 					error: (error) => {
 						reject(
-							new Error(`Erro ao processar CSV: ${error.message}`)
+							new Error(
+								`Erro ao processar CSV: ${error.message}`,
+							),
 						);
 					},
 				});
 			});
 		},
-		[]
+		[],
 	);
 
 	const parseXLSX = useCallback(
 		async (file: File): Promise<SpreadsheetData> => {
+			const XLSX = await import("xlsx");
+
 			return new Promise((resolve, reject) => {
 				const reader = new FileReader();
 
@@ -121,7 +125,7 @@ export function useFileParser(): UseFileParserReturn {
 									type,
 									isValid: true,
 								};
-							})
+							}),
 						);
 
 						const spreadsheetData: SpreadsheetData = {
@@ -147,7 +151,7 @@ export function useFileParser(): UseFileParserReturn {
 				reader.readAsBinaryString(file);
 			});
 		},
-		[]
+		[],
 	);
 
 	const parseFile = useCallback(
@@ -162,11 +166,11 @@ export function useFileParser(): UseFileParserReturn {
 					return parseXLSX(file);
 				default:
 					throw new Error(
-						`Formato de arquivo não suportado: ${extension}`
+						`Formato de arquivo não suportado: ${extension}`,
 					);
 			}
 		},
-		[parseCSV, parseXLSX]
+		[parseCSV, parseXLSX],
 	);
 
 	return {

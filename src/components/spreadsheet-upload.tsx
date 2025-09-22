@@ -1,7 +1,7 @@
 "use client";
 
 import clsx from "clsx";
-import { useCallback, useMemo, useState } from "react";
+import { lazy, Suspense, useCallback, useMemo, useState } from "react";
 
 import {
 	useFileParser,
@@ -19,12 +19,26 @@ import type {
 	UploadOptions,
 	ValidationResult,
 } from "../types";
-import { ColumnMapping } from "./column-mapping";
-import { DataEditor } from "./data-editor";
-import { Preview } from "./preview";
-import { Result } from "./result";
-import { Upload } from "./upload";
-import { Validation } from "./validation";
+
+// Lazy load components that are not always needed
+const ColumnMapping = lazy(() =>
+	import("./column-mapping").then((m) => ({ default: m.ColumnMapping })),
+);
+const DataEditor = lazy(() =>
+	import("./data-editor").then((m) => ({ default: m.DataEditor })),
+);
+const Preview = lazy(() =>
+	import("./preview").then((m) => ({ default: m.Preview })),
+);
+const Result = lazy(() =>
+	import("./result").then((m) => ({ default: m.Result })),
+);
+const Upload = lazy(() =>
+	import("./upload").then((m) => ({ default: m.Upload })),
+);
+const Validation = lazy(() =>
+	import("./validation").then((m) => ({ default: m.Validation })),
+);
 
 export interface SpreadsheetUploadProps
 	extends Omit<CustomizableComponentProps, "theme"> {
@@ -32,7 +46,7 @@ export interface SpreadsheetUploadProps
 		data: SpreadsheetData,
 		mappings: ColumnMappingType[],
 		validation: ValidationResult,
-		transformedData: Record<string, unknown>[] | null
+		transformedData: Record<string, unknown>[] | null,
 	) => void;
 	uploadOptions?: Partial<UploadOptions>;
 	availableFields?: AvailableField[];
@@ -134,7 +148,7 @@ export function SpreadsheetUpload({
 
 					const matchesField = (
 						header: string,
-						field: AvailableField
+						field: AvailableField,
 					): boolean => {
 						const normalize = (str: string) =>
 							str
@@ -157,7 +171,7 @@ export function SpreadsheetUpload({
 								field.columnCandidates.some(
 									(candidate) =>
 										normalize(candidate) ===
-										headerNormalized
+										headerNormalized,
 								);
 							if (exactCandidateMatch) return true;
 
@@ -167,10 +181,10 @@ export function SpreadsheetUpload({
 										normalize(candidate);
 									return (
 										candidateNormalized.includes(
-											headerNormalized
+											headerNormalized,
 										) ||
 										headerNormalized.includes(
-											candidateNormalized
+											candidateNormalized,
 										)
 									);
 								});
@@ -189,7 +203,7 @@ export function SpreadsheetUpload({
 
 					parsedData.headers.forEach((header, index) => {
 						const matchingField = availableFields.find((field) =>
-							matchesField(header, field)
+							matchesField(header, field),
 						);
 
 						if (matchingField) {
@@ -212,7 +226,7 @@ export function SpreadsheetUpload({
 				setError(
 					err instanceof Error
 						? err.message
-						: t("common.unknownError")
+						: t("common.unknownError"),
 				);
 			} finally {
 				setLoading(false);
@@ -227,7 +241,7 @@ export function SpreadsheetUpload({
 			availableFields,
 			setColumnMappings,
 			t,
-		]
+		],
 	);
 
 	const handleMappingsChange = useCallback(
@@ -245,7 +259,7 @@ export function SpreadsheetUpload({
 			data,
 			validateData,
 			setValidationResult,
-		]
+		],
 	);
 
 	const handleDataChange = useCallback(
@@ -263,7 +277,7 @@ export function SpreadsheetUpload({
 			columnMappings,
 			validateData,
 			setValidationResult,
-		]
+		],
 	);
 
 	const handleValidate = useCallback(() => {
@@ -277,7 +291,7 @@ export function SpreadsheetUpload({
 					data,
 					columnMappings,
 					validation,
-					transformedData
+					transformedData,
 				);
 			}
 		}
@@ -301,7 +315,7 @@ export function SpreadsheetUpload({
 
 		// Check if all required fields are mapped
 		const mappedTargetFields = new Set(
-			columnMappings.map((m) => m.targetField)
+			columnMappings.map((m) => m.targetField),
 		);
 		const allRequiredFieldsMapped = availableFields
 			.filter((field) => field.required)
@@ -358,19 +372,19 @@ export function SpreadsheetUpload({
 				accessible: accessibleSteps.result,
 			},
 		],
-		[t, data, columnMappings, validationResult, accessibleSteps]
+		[t, data, columnMappings, validationResult, accessibleSteps],
 	);
 
 	const getNavigationState = useCallback(() => {
 		const currentIndex = steps.findIndex(
-			(step: (typeof steps)[0]) => step.key === currentStep
+			(step: (typeof steps)[0]) => step.key === currentStep,
 		);
 
 		const canGoBack = currentIndex > 0;
 
 		// Check if all required fields are mapped
 		const mappedTargetFields = new Set(
-			columnMappings.map((m) => m.targetField)
+			columnMappings.map((m) => m.targetField),
 		);
 		const allRequiredFieldsMapped = availableFields
 			.filter((field) => field.required)
@@ -448,7 +462,7 @@ export function SpreadsheetUpload({
 							type="button"
 							onClick={() =>
 								setCurrentStep(
-									navigation.prevStep as typeof currentStep
+									navigation.prevStep as typeof currentStep,
 								)
 							}
 							className="rsu:inline-flex rsu:items-center rsu:rounded-md rsu:border rsu:border-gray-300 rsu:bg-white rsu:px-4 rsu:py-2 rsu:font-medium rsu:text-gray-700 rsu:text-sm rsu:hover:bg-gray-50"
@@ -489,7 +503,7 @@ export function SpreadsheetUpload({
 							type="button"
 							onClick={() =>
 								setCurrentStep(
-									navigation.nextStep as typeof currentStep
+									navigation.nextStep as typeof currentStep,
 								)
 							}
 							className="rsu:inline-flex rsu:items-center rsu:rounded-md rsu:border rsu:border-transparent rsu:bg-blue-600 rsu:px-4 rsu:py-2 rsu:font-medium rsu:text-sm rsu:text-white rsu:hover:bg-blue-700"
@@ -518,20 +532,28 @@ export function SpreadsheetUpload({
 	};
 
 	const renderStepContent = () => {
+		const LoadingFallback = () => (
+			<div className="rsu:flex rsu:items-center rsu:justify-center rsu:py-8">
+				<div className="rsu:h-8 rsu:w-8 rsu:animate-spin rsu:rounded-full rsu:border-blue-600 rsu:border-b-2"></div>
+			</div>
+		);
+
 		switch (currentStep) {
 			case "upload":
 				return (
 					<div className="rsu:w-full">
-						<Upload
-							onFileSelect={handleFileSelect}
-							options={uploadOptions}
-							loading={isLoading}
-							error={error}
-							i18n={i18n}
-							theme={theme}
-							customComponents={customComponents}
-							customStyles={customStyles}
-						/>
+						<Suspense fallback={<LoadingFallback />}>
+							<Upload
+								onFileSelect={handleFileSelect}
+								options={uploadOptions}
+								loading={isLoading}
+								error={error}
+								i18n={i18n}
+								theme={theme}
+								customComponents={customComponents}
+								customStyles={customStyles}
+							/>
+						</Suspense>
 						<NavigationButtons />
 					</div>
 				);
@@ -539,20 +561,22 @@ export function SpreadsheetUpload({
 			case "preview":
 				return data ? (
 					<div className="rsu:w-full">
-						<Preview
-							data={data}
-							i18n={i18n}
-							theme={theme}
-							onCellClick={(row, column, value) => {
-								console.log("Cell clicked:", {
-									row,
-									column,
-									value,
-								});
-							}}
-							customComponents={customComponents}
-							customStyles={customStyles}
-						/>
+						<Suspense fallback={<LoadingFallback />}>
+							<Preview
+								data={data}
+								i18n={i18n}
+								theme={theme}
+								onCellClick={(row, column, value) => {
+									console.log("Cell clicked:", {
+										row,
+										column,
+										value,
+									});
+								}}
+								customComponents={customComponents}
+								customStyles={customStyles}
+							/>
+						</Suspense>
 						<NavigationButtons />
 					</div>
 				) : null;
@@ -560,17 +584,19 @@ export function SpreadsheetUpload({
 			case "mapping":
 				return data ? (
 					<div className="rsu:w-full">
-						<ColumnMapping
-							data={data}
-							mappings={columnMappings}
-							onMappingsChange={handleMappingsChange}
-							availableFields={availableFields}
-							autoMapEnabled={autoMap}
-							i18n={i18n}
-							theme={theme}
-							customComponents={customComponents}
-							customStyles={customStyles}
-						/>
+						<Suspense fallback={<LoadingFallback />}>
+							<ColumnMapping
+								data={data}
+								mappings={columnMappings}
+								onMappingsChange={handleMappingsChange}
+								availableFields={availableFields}
+								autoMapEnabled={autoMap}
+								i18n={i18n}
+								theme={theme}
+								customComponents={customComponents}
+								customStyles={customStyles}
+							/>
+						</Suspense>
 						<NavigationButtons />
 					</div>
 				) : null;
@@ -578,19 +604,21 @@ export function SpreadsheetUpload({
 			case "validation":
 				return validationResult ? (
 					<div className="rsu:w-full">
-						<Validation
-							validationResult={validationResult}
-							i18n={i18n}
-							theme={theme}
-							onErrorClick={(error) => {
-								console.log("Error clicked:", error);
-							}}
-							onWarningClick={(warning) => {
-								console.log("Warning clicked:", warning);
-							}}
-							customComponents={customComponents}
-							customStyles={customStyles}
-						/>
+						<Suspense fallback={<LoadingFallback />}>
+							<Validation
+								validationResult={validationResult}
+								i18n={i18n}
+								theme={theme}
+								onErrorClick={(error) => {
+									console.log("Error clicked:", error);
+								}}
+								onWarningClick={(warning) => {
+									console.log("Warning clicked:", warning);
+								}}
+								customComponents={customComponents}
+								customStyles={customStyles}
+							/>
+						</Suspense>
 						<NavigationButtons />
 					</div>
 				) : (
@@ -607,19 +635,21 @@ export function SpreadsheetUpload({
 			case "editor":
 				return data ? (
 					<div className="rsu:w-full">
-						<DataEditor
-							data={data}
-							mappings={columnMappings}
-							validationResult={validationResult || undefined}
-							i18n={i18n}
-							onDataChange={handleDataChange}
-							onCellEdit={(row, column, value) => {
-								updateCell(row, column, value);
-							}}
-							theme={theme}
-							customComponents={customComponents}
-							customStyles={customStyles}
-						/>
+						<Suspense fallback={<LoadingFallback />}>
+							<DataEditor
+								data={data}
+								mappings={columnMappings}
+								validationResult={validationResult || undefined}
+								i18n={i18n}
+								onDataChange={handleDataChange}
+								onCellEdit={(row, column, value) => {
+									updateCell(row, column, value);
+								}}
+								theme={theme}
+								customComponents={customComponents}
+								customStyles={customStyles}
+							/>
+						</Suspense>
 						<NavigationButtons />
 					</div>
 				) : null;
@@ -627,26 +657,28 @@ export function SpreadsheetUpload({
 			case "result":
 				return data ? (
 					<div className="rsu:w-full">
-						<Result
-							data={data}
-							i18n={i18n}
-							mappings={columnMappings}
-							validationResult={validationResult}
-							transformedData={transformedData}
-							onFinish={() => {
-								if (onDataProcessed && validationResult) {
-									onDataProcessed(
-										data,
-										columnMappings,
-										validationResult,
-										transformedData
-									);
-								}
-							}}
-							theme={theme}
-							customComponents={customComponents}
-							customStyles={customStyles}
-						/>
+						<Suspense fallback={<LoadingFallback />}>
+							<Result
+								data={data}
+								i18n={i18n}
+								mappings={columnMappings}
+								validationResult={validationResult}
+								transformedData={transformedData}
+								onFinish={() => {
+									if (onDataProcessed && validationResult) {
+										onDataProcessed(
+											data,
+											columnMappings,
+											validationResult,
+											transformedData,
+										);
+									}
+								}}
+								theme={theme}
+								customComponents={customComponents}
+								customStyles={customStyles}
+							/>
+						</Suspense>
 						<NavigationButtons />
 					</div>
 				) : null;
@@ -680,8 +712,8 @@ export function SpreadsheetUpload({
 				"--rsu-shadow-sm": theme.shadows.sm,
 				"--rsu-shadow-md": theme.shadows.md,
 				"--rsu-shadow-lg": theme.shadows.lg,
-			} as React.CSSProperties),
-		[theme]
+			}) as React.CSSProperties,
+		[theme],
 	);
 
 	return (
@@ -689,7 +721,7 @@ export function SpreadsheetUpload({
 			className={clsx(
 				"rsu rsu:mx-auto rsu:w-full rsu:max-w-7xl rsu:p-4 rsu:sm:p-6 rsu:lg:p-8",
 				className,
-				customStyles.container
+				customStyles.container,
 			)}
 			style={{
 				...themeStyles,
@@ -719,7 +751,7 @@ export function SpreadsheetUpload({
 													| "mapping"
 													| "validation"
 													| "editor"
-													| "result"
+													| "result",
 											);
 										}
 									}}
@@ -729,48 +761,50 @@ export function SpreadsheetUpload({
 										!step.accessible
 											? "rsu:cursor-not-allowed rsu:opacity-50"
 											: currentStep === step.key
-											? "rsu:scale-105 rsu:text-current"
-											: step.completed
-											? "rsu:hover:scale-102 rsu:hover:opacity-80"
-											: "rsu:border-transparent rsu:hover:scale-102 rsu:hover:opacity-80",
-										customStyles.button
+												? "rsu:scale-105 rsu:text-current"
+												: step.completed
+													? "rsu:hover:scale-102 rsu:hover:opacity-80"
+													: "rsu:border-transparent rsu:hover:scale-102 rsu:hover:opacity-80",
+										customStyles.button,
 									)}
 									style={{
 										borderBottomColor: !step.accessible
 											? theme.colors.secondary
 											: currentStep === step.key
-											? theme.colors.primary
-											: step.completed
-											? theme.colors.success
-											: "transparent",
+												? theme.colors.primary
+												: step.completed
+													? theme.colors.success
+													: "transparent",
 										color: !step.accessible
 											? theme.colors.textSecondary
 											: currentStep === step.key
-											? theme.colors.primary
-											: step.completed
-											? theme.colors.success
-											: theme.colors.textSecondary,
+												? theme.colors.primary
+												: step.completed
+													? theme.colors.success
+													: theme.colors
+															.textSecondary,
 									}}
 								>
 									<div
 										className={clsx(
-											"rsu:flex rsu:h-5 rsu:w-5 rsu:items-center rsu:justify-center rsu:rounded-full rsu:font-bold rsu:text-xs rsu:transition-all rsu:duration-200 rsu:sm:h-6 rsu:sm:w-6"
+											"rsu:flex rsu:h-5 rsu:w-5 rsu:items-center rsu:justify-center rsu:rounded-full rsu:font-bold rsu:text-xs rsu:transition-all rsu:duration-200 rsu:sm:h-6 rsu:sm:w-6",
 										)}
 										style={{
 											backgroundColor: !step.accessible
 												? `${theme.colors.secondary}20`
 												: currentStep === step.key
-												? `${theme.colors.primary}20`
-												: step.completed
-												? `${theme.colors.success}20`
-												: `${theme.colors.secondary}20`,
+													? `${theme.colors.primary}20`
+													: step.completed
+														? `${theme.colors.success}20`
+														: `${theme.colors.secondary}20`,
 											color: !step.accessible
 												? theme.colors.textSecondary
 												: currentStep === step.key
-												? theme.colors.primary
-												: step.completed
-												? theme.colors.success
-												: theme.colors.textSecondary,
+													? theme.colors.primary
+													: step.completed
+														? theme.colors.success
+														: theme.colors
+																.textSecondary,
 										}}
 									>
 										{step.completed ? "✓" : index + 1}
@@ -805,7 +839,7 @@ export function SpreadsheetUpload({
 							onClick={handleClear}
 							className={clsx(
 								"rsu:inline-flex rsu:items-center rsu:border rsu:px-3 rsu:py-2 rsu:font-medium rsu:text-sm rsu:transition-colors",
-								customStyles.button
+								customStyles.button,
 							)}
 							style={{
 								borderRadius: theme.borderRadius,
@@ -822,7 +856,7 @@ export function SpreadsheetUpload({
 								onClick={() => setCurrentStep("upload")}
 								className={clsx(
 									"rsu:inline-flex rsu:items-center rsu:border rsu:px-3 rsu:py-2 rsu:font-medium rsu:text-sm rsu:transition-colors",
-									customStyles.button
+									customStyles.button,
 								)}
 								style={{
 									borderRadius: theme.borderRadius,

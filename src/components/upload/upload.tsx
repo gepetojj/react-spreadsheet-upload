@@ -56,7 +56,7 @@ export function Upload({
 				onFileSelect(file);
 			}
 		},
-		[onFileSelect, maxFileSize]
+		[onFileSelect, maxFileSize],
 	);
 
 	const handleDragOver = useCallback((event: React.DragEvent) => {
@@ -89,7 +89,7 @@ export function Upload({
 				onFileSelect(file);
 			}
 		},
-		[onFileSelect, maxFileSize, disabled, loading]
+		[onFileSelect, maxFileSize, disabled, loading],
 	);
 
 	const handleBrowseClick = useCallback(() => {
@@ -106,7 +106,7 @@ export function Upload({
 			className={clsx(
 				"rsu rsu:relative rsu:flex rsu:w-full rsu:items-center rsu:justify-center rsu:px-4",
 				className,
-				customStyles.container
+				customStyles.container,
 			)}
 		>
 			<button
@@ -118,7 +118,7 @@ export function Upload({
 							disabled,
 						"rsu:pointer-events-none": loading,
 					},
-					customStyles.button
+					customStyles.button,
 				)}
 				onDragOver={handleDragOver}
 				onDragEnter={handleDragEnter}
@@ -206,7 +206,7 @@ export function Upload({
 							type="button"
 							className={clsx(
 								"rsu:inline-flex rsu:items-center rsu:border rsu:border-transparent rsu:px-4 rsu:py-2 rsu:font-medium rsu:text-sm rsu:transition-all rsu:duration-200 rsu:hover:scale-105 rsu:focus:outline-none rsu:focus:ring-2 rsu:focus:ring-offset-2 rsu:active:scale-95 rsu:sm:px-6 rsu:sm:py-3 rsu:sm:text-base",
-								customStyles.button
+								customStyles.button,
 							)}
 							disabled={disabled}
 							style={{

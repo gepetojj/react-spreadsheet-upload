@@ -66,9 +66,9 @@ export function DataEditor({
 				data.rows
 					.map((row, index) => ({ row, index }))
 					.filter(({ row }) =>
-						row.some((cell) => cell.isValid === false)
+						row.some((cell) => cell.isValid === false),
 					)
-					.map(({ index }) => index)
+					.map(({ index }) => index),
 			);
 		}
 
@@ -88,7 +88,7 @@ export function DataEditor({
 
 		return {
 			headers: displayMappings.map(
-				(mapping: ColumnMappingType) => mapping.targetLabel
+				(mapping: ColumnMappingType) => mapping.targetLabel,
 			),
 			rows: data.rows
 				.slice(0, maxRows)
@@ -154,7 +154,7 @@ export function DataEditor({
 			// For "all" filter, we show the first maxRows rows
 			return Array.from(
 				{ length: Math.min(maxRows, data.rows.length) },
-				(_, i) => i
+				(_, i) => i,
 			);
 		}
 
@@ -195,7 +195,7 @@ export function DataEditor({
 			setEditingCell({ row: originalRow, column });
 			setEditValue(cell.formatted || "");
 		},
-		[editable, rowFilter, displayData.originalIndices]
+		[editable, rowFilter, displayData.originalIndices],
 	);
 
 	const handleCellDoubleClick = useCallback(
@@ -210,14 +210,14 @@ export function DataEditor({
 			setEditingCell({ row: originalRow, column });
 			setEditValue(cell.formatted || "");
 		},
-		[editable, rowFilter, displayData.originalIndices]
+		[editable, rowFilter, displayData.originalIndices],
 	);
 
 	const handleInputChange = useCallback(
 		(event: React.ChangeEvent<HTMLInputElement>) => {
 			setEditValue(event.target.value);
 		},
-		[]
+		[],
 	);
 
 	const handleSaveEdit = useCallback(() => {
@@ -277,7 +277,7 @@ export function DataEditor({
 				handleCancelEdit();
 			}
 		},
-		[handleSaveEdit, handleCancelEdit]
+		[handleSaveEdit, handleCancelEdit],
 	);
 
 	const handleInputBlur = useCallback(() => {
@@ -304,7 +304,7 @@ export function DataEditor({
 				customStyles.cell || ""
 			}`;
 		},
-		[editable, editingCell, customStyles.cell]
+		[editable, editingCell, customStyles.cell],
 	);
 
 	const getCellStyle = useCallback(
@@ -320,14 +320,14 @@ export function DataEditor({
 				backgroundColor: isEditing
 					? `${theme?.colors.primary || "#3B82F6"}20`
 					: isInvalid
-					? `${theme?.colors.error || "#EF4444"}10`
-					: editable
-					? theme?.colors.surface || "#FFFFFF"
-					: `${theme?.colors.secondary || "#6B7280"}05`,
+						? `${theme?.colors.error || "#EF4444"}10`
+						: editable
+							? theme?.colors.surface || "#FFFFFF"
+							: `${theme?.colors.secondary || "#6B7280"}05`,
 				borderColor: theme?.colors.secondary || "#6B7280",
 			};
 		},
-		[editingCell, theme, editable]
+		[editingCell, theme, editable],
 	);
 
 	return (
@@ -335,7 +335,7 @@ export function DataEditor({
 			className={clsx(
 				"rsu rsu:w-full rsu:space-y-4 rsu:sm:space-y-6",
 				className,
-				customStyles.container
+				customStyles.container,
 			)}
 		>
 			<div className="rsu:flex rsu:flex-col rsu:items-start rsu:justify-between rsu:gap-4 rsu:sm:flex-row rsu:sm:items-center">
@@ -359,7 +359,7 @@ export function DataEditor({
 							value={rowFilter}
 							onChange={(e) =>
 								handleRowFilterChange(
-									e.target.value as RowFilterType
+									e.target.value as RowFilterType,
 								)
 							}
 							className={`rsu:block rsu:rounded-md rsu:border-gray-300 rsu:text-sm rsu:shadow-sm rsu:focus:border-blue-500 rsu:focus:ring-blue-500 ${
@@ -452,7 +452,7 @@ export function DataEditor({
 										>
 											{header}
 										</th>
-									)
+									),
 								)}
 							</tr>
 						</thead>
@@ -471,7 +471,7 @@ export function DataEditor({
 									rowFilter !== "all"
 										? displayData.originalIndices[
 												displayRowIndex
-										  ]
+											]
 										: displayRowIndex;
 
 								return (
@@ -506,32 +506,32 @@ export function DataEditor({
 										{row.map(
 											(
 												cell: CellData,
-												columnIndex: number
+												columnIndex: number,
 											) => (
 												<td
 													key={`cell-${originalRowIndex}-${columnIndex}-${cell.value}`}
 													className={getCellClassName(
 														cell,
 														originalRowIndex,
-														columnIndex
+														columnIndex,
 													)}
 													style={getCellStyle(
 														cell,
 														originalRowIndex,
-														columnIndex
+														columnIndex,
 													)}
 													onClick={() =>
 														handleCellClick(
 															displayRowIndex,
 															columnIndex,
-															cell
+															cell,
 														)
 													}
 													onDoubleClick={() =>
 														handleCellDoubleClick(
 															displayRowIndex,
 															columnIndex,
-															cell
+															cell,
 														)
 													}
 													onKeyDown={(event) => {
@@ -544,7 +544,7 @@ export function DataEditor({
 															handleCellClick(
 																displayRowIndex,
 																columnIndex,
-																cell
+																cell,
 															);
 														}
 													}}
@@ -586,11 +586,11 @@ export function DataEditor({
 														</span>
 													)}
 												</td>
-											)
+											),
 										)}
 									</tr>
 								);
-							}
+							},
 						)}
 					</tbody>
 				</TableComponent>
@@ -605,12 +605,12 @@ export function DataEditor({
 							? t("editor.displayingErrors", {
 									count: displayData.rows.length,
 									total: errorRowCount,
-							  })
+								})
 							: t("editor.displayingRows", {
 									shown: maxRows,
 									total: data.totalRows,
 									columns: maxColumns,
-							  })}
+								})}
 					</p>
 				</div>
 			)}

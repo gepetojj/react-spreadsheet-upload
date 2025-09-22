@@ -1,7 +1,33 @@
 @import "tailwindcss" prefix(rsu);
 
 @layer rsu {
+	.rsu {
+		@apply rsu:box-border;
+	}
+
+	.rsu *,
+	.rsu *::before,
+	.rsu *::after {
+		@apply rsu:box-border;
+	}
+
 	.rsu button {
-		@apply rsu:cursor-pointer;
+		@apply rsu:cursor-pointer rsu:transition-colors;
+	}
+
+	.rsu input,
+	.rsu textarea,
+	.rsu select {
+		@apply rsu:outline-none rsu:focus:ring-2 rsu:focus:ring-blue-500;
+	}
+
+	@keyframes rsu-spin {
+		to {
+			transform: rotate(360deg);
+		}
+	}
+
+	.rsu:animate-spin {
+		animation: rsu-spin 1s linear infinite;
 	}
 }

@@ -52,7 +52,7 @@ export function ColumnMapping({
 	const requiredFieldsNotMapped = useMemo(() => {
 		const mappedTargetFields = new Set(mappings.map((m) => m.targetField));
 		return availableFields.filter(
-			(field) => field.required && !mappedTargetFields.has(field.field)
+			(field) => field.required && !mappedTargetFields.has(field.field),
 		);
 	}, [availableFields, mappings]);
 
@@ -73,7 +73,7 @@ export function ColumnMapping({
 	const handleFieldChange = useCallback(
 		(sourceIndex: number, targetField: string) => {
 			const fieldConfig = availableFields.find(
-				(f) => f.field === targetField
+				(f) => f.field === targetField,
 			);
 
 			if (fieldConfig) {
@@ -88,22 +88,22 @@ export function ColumnMapping({
 				};
 
 				const updatedMappings = mappings.filter(
-					(m) => m.sourceIndex !== sourceIndex
+					(m) => m.sourceIndex !== sourceIndex,
 				);
 				onMappingsChange([...updatedMappings, newMapping]);
 			}
 		},
-		[mappings, onMappingsChange, data.headers, availableFields]
+		[mappings, onMappingsChange, data.headers, availableFields],
 	);
 
 	const handleRemoveMapping = useCallback(
 		(sourceIndex: number) => {
 			const updatedMappings = mappings.filter(
-				(m) => m.sourceIndex !== sourceIndex
+				(m) => m.sourceIndex !== sourceIndex,
 			);
 			onMappingsChange(updatedMappings);
 		},
-		[mappings, onMappingsChange]
+		[mappings, onMappingsChange],
 	);
 
 	const handleAutoMap = useCallback(() => {
@@ -114,7 +114,7 @@ export function ColumnMapping({
 		// Helper function to check if header matches field candidates
 		const matchesField = (
 			header: string,
-			field: AvailableField
+			field: AvailableField,
 		): boolean => {
 			// Normalize strings: trim, lowercase, remove accents, and replace multiple spaces
 			const normalize = (str: string) =>
@@ -137,7 +137,7 @@ export function ColumnMapping({
 			// Priority 2: Check against column candidates (exact match first)
 			if (field.columnCandidates) {
 				const exactCandidateMatch = field.columnCandidates.some(
-					(candidate) => normalize(candidate) === headerNormalized
+					(candidate) => normalize(candidate) === headerNormalized,
 				);
 				if (exactCandidateMatch) return true;
 
@@ -149,7 +149,7 @@ export function ColumnMapping({
 							candidateNormalized.includes(headerNormalized) ||
 							headerNormalized.includes(candidateNormalized)
 						);
-					}
+					},
 				);
 				if (partialCandidateMatch) return true;
 			}
@@ -167,10 +167,10 @@ export function ColumnMapping({
 
 		// Separate required and optional fields
 		const requiredFields = availableFields.filter(
-			(field) => field.required
+			(field) => field.required,
 		);
 		const optionalFields = availableFields.filter(
-			(field) => !field.required
+			(field) => !field.required,
 		);
 
 		// Process headers and try to map them
@@ -181,7 +181,7 @@ export function ColumnMapping({
 			if (processedHeaders.has(index)) return;
 
 			const matchingRequiredField = requiredFields.find((field) =>
-				matchesField(header, field)
+				matchesField(header, field),
 			);
 
 			if (matchingRequiredField) {
@@ -203,7 +203,7 @@ export function ColumnMapping({
 			if (processedHeaders.has(index)) return;
 
 			const matchingOptionalField = optionalFields.find((field) =>
-				matchesField(header, field)
+				matchesField(header, field),
 			);
 
 			if (matchingOptionalField) {
@@ -228,7 +228,7 @@ export function ColumnMapping({
 			className={clsx(
 				"rsu rsu:w-full rsu:space-y-4 rsu:sm:space-y-6",
 				className,
-				customStyles.container
+				customStyles.container,
 			)}
 		>
 			<div className="rsu:flex rsu:flex-col rsu:items-start rsu:justify-between rsu:gap-4 rsu:sm:flex-row rsu:sm:items-center">
@@ -349,7 +349,8 @@ export function ColumnMapping({
 					<div className="rsu:space-y-2">
 						{requiredFields.map((field) => {
 							const isMapped = mappings.some(
-								(mapping) => mapping.targetField === field.field
+								(mapping) =>
+									mapping.targetField === field.field,
 							);
 							return (
 								<div
@@ -580,7 +581,7 @@ export function ColumnMapping({
 											onChange={(e) =>
 												handleFieldChange(
 													column.index,
-													e.target.value
+													e.target.value,
 												)
 											}
 											className={`rsu:block rsu:w-full rsu:border rsu:shadow-sm rsu:focus:outline-none rsu:focus:ring-2 ${

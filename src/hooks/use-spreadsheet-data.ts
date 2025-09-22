@@ -8,7 +8,7 @@ import type {
 
 function transformDataToJSON(
 	data: SpreadsheetData,
-	mappings: ColumnMapping[]
+	mappings: ColumnMapping[],
 ): Record<string, unknown>[] {
 	if (!data || mappings.length === 0) return [];
 
@@ -66,7 +66,7 @@ export interface UseSpreadsheetDataReturn {
 	removeColumnMapping: (sourceIndex: number) => void;
 	updateColumnMapping: (
 		sourceIndex: number,
-		updates: Partial<ColumnMapping>
+		updates: Partial<ColumnMapping>,
 	) => void;
 }
 
@@ -123,7 +123,7 @@ export function useSpreadsheetData(): UseSpreadsheetDataReturn {
 				};
 			});
 		},
-		[data]
+		[data],
 	);
 
 	const addColumnMapping = useCallback((mapping: ColumnMapping) => {
@@ -132,7 +132,7 @@ export function useSpreadsheetData(): UseSpreadsheetDataReturn {
 
 	const removeColumnMapping = useCallback((sourceIndex: number) => {
 		setColumnMappings((prev) =>
-			prev.filter((mapping) => mapping.sourceIndex !== sourceIndex)
+			prev.filter((mapping) => mapping.sourceIndex !== sourceIndex),
 		);
 	}, []);
 
@@ -142,11 +142,11 @@ export function useSpreadsheetData(): UseSpreadsheetDataReturn {
 				prev.map((mapping) =>
 					mapping.sourceIndex === sourceIndex
 						? { ...mapping, ...updates }
-						: mapping
-				)
+						: mapping,
+				),
 			);
 		},
-		[]
+		[],
 	);
 
 	const clearData = useCallback(() => {

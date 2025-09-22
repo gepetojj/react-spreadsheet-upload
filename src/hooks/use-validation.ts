@@ -12,11 +12,11 @@ import type {
 export interface UseValidationReturn {
 	validateData: (
 		data: SpreadsheetData,
-		mappings: ColumnMapping[]
+		mappings: ColumnMapping[],
 	) => ValidationResult;
 	validateCell: (
 		value: unknown,
-		rules: ValidationRule[]
+		rules: ValidationRule[],
 	) => { isValid: boolean; error?: string };
 	validateRequired: (value: unknown) => boolean;
 	validateMinLength: (value: string, minLength: number) => boolean;
@@ -38,21 +38,21 @@ export function useValidation(i18n?: Partial<I18nConfig>): UseValidationReturn {
 		(value: string, minLength: number): boolean => {
 			return value.length >= minLength;
 		},
-		[]
+		[],
 	);
 
 	const validateMaxLength = useCallback(
 		(value: string, maxLength: number): boolean => {
 			return value.length <= maxLength;
 		},
-		[]
+		[],
 	);
 
 	const validatePattern = useCallback(
 		(value: string, pattern: RegExp): boolean => {
 			return pattern.test(value);
 		},
-		[]
+		[],
 	);
 
 	const validateMin = useCallback((value: number, min: number): boolean => {
@@ -80,7 +80,7 @@ export function useValidation(i18n?: Partial<I18nConfig>): UseValidationReturn {
 	const validateCell = useCallback(
 		(
 			value: unknown,
-			rules: ValidationRule[]
+			rules: ValidationRule[],
 		): { isValid: boolean; error?: string } => {
 			for (const rule of rules) {
 				let isValid = true;
@@ -133,13 +133,13 @@ export function useValidation(i18n?: Partial<I18nConfig>): UseValidationReturn {
 			validatePattern,
 			validateMin,
 			validateMax,
-		]
+		],
 	);
 
 	const validateData = useCallback(
 		(
 			data: SpreadsheetData,
-			mappings: ColumnMapping[]
+			mappings: ColumnMapping[],
 		): ValidationResult => {
 			const errors: ValidationResult["errors"] = [];
 			const warnings: ValidationResult["warnings"] = [];
@@ -158,7 +158,7 @@ export function useValidation(i18n?: Partial<I18nConfig>): UseValidationReturn {
 					if (mapping?.validation) {
 						const validation = validateCell(
 							cell.value,
-							mapping.validation
+							mapping.validation,
 						);
 
 						if (!validation.isValid && validation.error) {
@@ -179,7 +179,7 @@ export function useValidation(i18n?: Partial<I18nConfig>): UseValidationReturn {
 							column: columnIndex,
 							field: mapping.targetField,
 							message: `${mapping.targetLabel} ${t(
-								"validation.required"
+								"validation.required",
 							)}`,
 							value: cell.value,
 						});
@@ -284,7 +284,7 @@ export function useValidation(i18n?: Partial<I18nConfig>): UseValidationReturn {
 				warnings,
 			};
 		},
-		[validateCell, validateRequired, validateEmail, validateUrl, t]
+		[validateCell, validateRequired, validateEmail, validateUrl, t],
 	);
 
 	return {

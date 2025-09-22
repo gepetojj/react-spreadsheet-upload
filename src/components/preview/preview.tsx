@@ -69,7 +69,7 @@ export function Preview({
 	const handleCellClick = (
 		rowIndex: number,
 		columnIndex: number,
-		cell: CellData
+		cell: CellData,
 	) => {
 		if (onCellClick) {
 			onCellClick(rowIndex, columnIndex, cell.value);
@@ -81,7 +81,7 @@ export function Preview({
 			className={clsx(
 				"rsu rsu:w-full rsu:space-y-4 rsu:sm:space-y-6",
 				className,
-				customStyles.container
+				customStyles.container,
 			)}
 		>
 			{showFileInfo && (
@@ -290,29 +290,29 @@ export function Preview({
 										className={clsx(
 											"rsu:px-3 rsu:py-2 rsu:text-sm rsu:transition-colors",
 											onCellClick && "rsu:cursor-pointer",
-											customStyles.cell
+											customStyles.cell,
 										)}
 										style={{
 											color:
 												cell.isValid === false
 													? theme?.colors.error ||
-													  "#EF4444"
+														"#EF4444"
 													: theme?.colors.text ||
-													  "#1F2937",
+														"#1F2937",
 											backgroundColor:
 												cell.isValid === false
 													? `${
 															theme?.colors
 																.error ||
 															"#EF4444"
-													  }10`
+														}10`
 													: "transparent",
 										}}
 										onClick={() =>
 											handleCellClick(
 												rowIndex,
 												columnIndex,
-												cell
+												cell,
 											)
 										}
 										onKeyDown={(event) => {
@@ -325,7 +325,7 @@ export function Preview({
 												handleCellClick(
 													rowIndex,
 													columnIndex,
-													cell
+													cell,
 												);
 											}
 										}}

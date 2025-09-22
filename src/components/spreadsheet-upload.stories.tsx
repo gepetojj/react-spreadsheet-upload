@@ -95,7 +95,7 @@ export const Default: Story = {
 		onDataProcessed: (
 			data: SpreadsheetData,
 			mappings: ColumnMapping[],
-			validation: ValidationResult
+			validation: ValidationResult,
 		) => {
 			console.log("Dados processados:", { data, mappings, validation });
 		},

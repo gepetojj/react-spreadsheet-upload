@@ -54,7 +54,7 @@ export function Result({
 		<div
 			className={clsx(
 				"rsu rsu:w-full rsu:space-y-6 rsu:px-4 rsu:text-center rsu:sm:space-y-8",
-				className
+				className,
 			)}
 		>
 			{/* Success Icon */}

@@ -77,7 +77,7 @@ export function Validation({
 			className={clsx(
 				"rsu rsu:w-full rsu:space-y-4",
 				className,
-				customStyles.container
+				customStyles.container,
 			)}
 			style={
 				{
@@ -124,7 +124,7 @@ export function Validation({
 							{validationResult.errors.length > 0
 								? t("validation.errors", {
 										count: validationResult.errors.length,
-								  })
+									})
 								: t("validation.noErrors")}
 						</span>
 					</div>
@@ -187,7 +187,7 @@ export function Validation({
 																		row:
 																			row +
 																			1,
-																	}
+																	},
 																)}{" "}
 																•{" "}
 																{t(
@@ -196,7 +196,7 @@ export function Validation({
 																		column:
 																			column +
 																			1,
-																	}
+																	},
 																)}
 															</span>
 															{firstError.field && (
@@ -206,7 +206,7 @@ export function Validation({
 																		"validation.field",
 																		{
 																			field: firstError.field,
-																		}
+																		},
 																	)}
 																</span>
 															)}
@@ -215,7 +215,7 @@ export function Validation({
 															{errors.map(
 																(
 																	error,
-																	index
+																	index,
 																) => (
 																	<div
 																		key={`error-${error.row}-${error.column}-${index}`}
@@ -225,7 +225,7 @@ export function Validation({
 																			{
 																				message:
 																					error.message,
-																			}
+																			},
 																		)}
 																		{error.value !==
 																			null &&
@@ -237,23 +237,22 @@ export function Validation({
 																						"validation.value",
 																						{
 																							value: String(
-																								error.value
+																								error.value,
 																							),
-																						}
+																						},
 																					)}
-
 																					)
 																				</span>
 																			)}
 																	</div>
-																)
+																),
 															)}
 														</div>
 													</div>
 												</div>
 											</button>
 										);
-									}
+									},
 								)}
 							</div>
 						) : (
@@ -294,7 +293,7 @@ export function Validation({
 												className="rsu:cursor-pointer rsu:rounded-md rsu:border rsu:border-yellow-200 rsu:bg-white rsu:p-3 rsu:hover:bg-yellow-100"
 												onClick={() =>
 													handleWarningClick(
-														firstWarning
+														firstWarning,
 													)
 												}
 												tabIndex={0}
@@ -316,7 +315,7 @@ export function Validation({
 																		row:
 																			row +
 																			1,
-																	}
+																	},
 																)}{" "}
 																•{" "}
 																{t(
@@ -325,7 +324,7 @@ export function Validation({
 																		column:
 																			column +
 																			1,
-																	}
+																	},
 																)}
 															</span>
 															{firstWarning.field && (
@@ -335,7 +334,7 @@ export function Validation({
 																		"validation.field",
 																		{
 																			field: firstWarning.field,
-																		}
+																		},
 																	)}
 																</span>
 															)}
@@ -344,7 +343,7 @@ export function Validation({
 															{warnings.map(
 																(
 																	warning,
-																	index
+																	index,
 																) => (
 																	<div
 																		key={`warning-${warning.row}-${warning.column}-${index}`}
@@ -354,7 +353,7 @@ export function Validation({
 																			{
 																				message:
 																					warning.message,
-																			}
+																			},
 																		)}
 																		{warning.value !==
 																			null &&
@@ -366,23 +365,22 @@ export function Validation({
 																						"validation.value",
 																						{
 																							value: String(
-																								warning.value
+																								warning.value,
 																							),
-																						}
+																						},
 																					)}
-
 																					)
 																				</span>
 																			)}
 																	</div>
-																)
+																),
 															)}
 														</div>
 													</div>
 												</div>
 											</button>
 										);
-									}
+									},
 								)}
 							</div>
 						) : (

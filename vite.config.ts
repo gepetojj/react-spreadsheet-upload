@@ -5,7 +5,9 @@ import dts from "vite-plugin-dts";
 
 export default defineConfig({
 	plugins: [
-		react(),
+		react({
+			jsxRuntime: "automatic",
+		}),
 		dts({
 			exclude: [
 				"**/*.stories.{js,jsx,ts,tsx}",
@@ -24,7 +26,7 @@ export default defineConfig({
 		rollupOptions: {
 			external: (id) => {
 				return /^(react|react-dom|react\/jsx-runtime|react\/jsx-dev-runtime)$/.test(
-					id
+					id,
 				);
 			},
 			output: {
@@ -33,10 +35,27 @@ export default defineConfig({
 					"react-dom": "ReactDOM",
 					"react/jsx-runtime": "React",
 				},
+				preserveModules: false,
+				manualChunks: undefined,
 			},
 		},
+		minify: "terser",
+		terserOptions: {
+			compress: {
+				drop_console: true,
+				drop_debugger: true,
+				pure_funcs: ["console.log", "console.info", "console.debug"],
+			},
+			mangle: {
+				safari10: true,
+			},
+		},
+		chunkSizeWarningLimit: 1000,
 	},
 	define: {
 		"process.env.NODE_ENV": JSON.stringify("production"),
+	},
+	optimizeDeps: {
+		include: ["clsx", "papaparse", "xlsx"],
 	},
 });
