@@ -26,6 +26,7 @@ export function ColumnMapping({
 	availableFields = [],
 	autoMapEnabled = true,
 	i18n,
+	theme,
 	className = "",
 	customComponents = {},
 	customStyles = {},
@@ -223,17 +224,25 @@ export function ColumnMapping({
 	return (
 		<div
 			className={clsx(
-				"rsu rsu:w-full rsu:space-y-6",
+				"rsu rsu:w-full rsu:space-y-4 rsu:sm:space-y-6",
 				className,
 				customStyles.container
 			)}
 		>
-			<div className="rsu:flex rsu:items-center rsu:justify-between">
+			<div className="rsu:flex rsu:flex-col rsu:items-start rsu:justify-between rsu:gap-4 rsu:sm:flex-row rsu:sm:items-center">
 				<div>
-					<h3 className="rsu:font-semibold rsu:text-gray-900 rsu:text-lg">
+					<h3
+						className="rsu:font-semibold rsu:text-lg"
+						style={{ color: theme?.colors.text || "#1F2937" }}
+					>
 						{t("mapping.title")}
 					</h3>
-					<p className="rsu:text-gray-600 rsu:text-sm">
+					<p
+						className="rsu:text-sm"
+						style={{
+							color: theme?.colors.textSecondary || "#6B7280",
+						}}
+					>
 						{t("mapping.subtitle")}
 					</p>
 				</div>
@@ -241,9 +250,15 @@ export function ColumnMapping({
 					<ButtonComponent
 						type="button"
 						onClick={handleAutoMap}
-						className={`rsu:inline-flex rsu:items-center rsu:rounded-md rsu:border rsu:border-gray-300 rsu:bg-white rsu:px-3 rsu:py-2 rsu:font-medium rsu:text-gray-700 rsu:text-sm rsu:hover:bg-gray-50 ${
+						className={`rsu:inline-flex rsu:items-center rsu:border rsu:px-3 rsu:py-2 rsu:font-medium rsu:text-sm rsu:transition-colors ${
 							customStyles.button || ""
 						}`}
+						style={{
+							borderRadius: theme?.borderRadius || "0.375rem",
+							borderColor: theme?.colors.secondary || "#6B7280",
+							backgroundColor: theme?.colors.surface || "#FFFFFF",
+							color: theme?.colors.text || "#1F2937",
+						}}
 					>
 						<svg
 							className="rsu:mr-2 rsu:h-4 rsu:w-4"
@@ -270,7 +285,7 @@ export function ColumnMapping({
 				<div className="rsu:rounded-lg rsu:border rsu:border-red-200 rsu:bg-red-50 rsu:p-4">
 					<div className="rsu:flex rsu:items-start">
 						<svg
-							className="rsu:h-5 rsu:mt-0.5 rsu:text-red-600 rsu:w-5"
+							className="rsu:mt-0.5 rsu:h-5 rsu:w-5 rsu:text-red-600"
 							fill="none"
 							stroke="currentColor"
 							viewBox="0 0 24 24"
@@ -289,7 +304,7 @@ export function ColumnMapping({
 								{t("mapping.requiredFieldsMissing")} (
 								{requiredFieldsNotMapped.length})
 							</h4>
-							<p className="rsu:text-red-700 rsu:text-sm rsu:mt-1">
+							<p className="rsu:mt-1 rsu:text-red-700 rsu:text-sm">
 								{t("mapping.requiredFieldsHelp")}
 							</p>
 							<div className="rsu:mt-2 rsu:space-y-1">
@@ -314,8 +329,19 @@ export function ColumnMapping({
 
 			{/* Required Fields Status */}
 			{requiredFields.length > 0 && (
-				<div className="rsu:rounded-lg rsu:bg-blue-50 rsu:p-4">
-					<h4 className="rsu:font-medium rsu:text-blue-800 rsu:mb-2">
+				<div
+					className="rsu:p-4"
+					style={{
+						backgroundColor: `${
+							theme?.colors.primary || "#3B82F6"
+						}10`,
+						borderRadius: theme?.borderRadius || "0.375rem",
+					}}
+				>
+					<h4
+						className="rsu:mb-2 rsu:font-medium"
+						style={{ color: theme?.colors.primary || "#3B82F6" }}
+					>
 						{t("mapping.requiredFields")}
 					</h4>
 					<div className="rsu:space-y-2">
@@ -343,7 +369,7 @@ export function ColumnMapping({
 									{isMapped ? (
 										<svg
 											aria-label="Mapped"
-											className="rsu:h-4 rsu:text-green-600 rsu:w-4"
+											className="rsu:h-4 rsu:w-4 rsu:text-green-600"
 											fill="none"
 											stroke="currentColor"
 											viewBox="0 0 24 24"
@@ -359,7 +385,7 @@ export function ColumnMapping({
 									) : (
 										<svg
 											aria-label="Not mapped"
-											className="rsu:h-4 rsu:text-gray-500 rsu:w-4"
+											className="rsu:h-4 rsu:w-4 rsu:text-gray-500"
 											fill="none"
 											stroke="currentColor"
 											viewBox="0 0 24 24"
@@ -383,20 +409,46 @@ export function ColumnMapping({
 			{/* Mapped Fields */}
 			{mappings.length > 0 && (
 				<div className="rsu:space-y-3">
-					<h4 className="rsu:font-medium rsu:text-gray-900">
+					<h4
+						className="rsu:font-medium"
+						style={{ color: theme?.colors.text || "#1F2937" }}
+					>
 						{t("mapping.mappedFields")} ({mappings.length})
 					</h4>
 					<div className="rsu:space-y-2">
 						{mappings.map((mapping) => (
 							<div
 								key={mapping.sourceIndex}
-								className="rsu:flex rsu:items-center rsu:justify-between rsu:rounded-lg rsu:border rsu:border-green-200 rsu:bg-green-50 rsu:p-3"
+								className="rsu:flex rsu:items-center rsu:justify-between rsu:border rsu:p-3"
+								style={{
+									backgroundColor: `${
+										theme?.colors.success || "#10B981"
+									}10`,
+									borderColor: `${
+										theme?.colors.success || "#10B981"
+									}30`,
+									borderRadius:
+										theme?.borderRadius || "0.375rem",
+								}}
 							>
 								<div className="rsu:flex-1">
-									<div className="rsu:font-medium rsu:text-gray-900">
+									<div
+										className="rsu:font-medium"
+										style={{
+											color:
+												theme?.colors.text || "#1F2937",
+										}}
+									>
 										{mapping.sourceName}
 									</div>
-									<div className="rsu:text-green-700 rsu:text-sm">
+									<div
+										className="rsu:text-sm"
+										style={{
+											color:
+												theme?.colors.success ||
+												"#10B981",
+										}}
+									>
 										→ {mapping.targetLabel}
 									</div>
 								</div>
@@ -431,19 +483,33 @@ export function ColumnMapping({
 
 			{/* Unmapped Columns */}
 			<div className="rsu:space-y-3">
-				<h4 className="rsu:font-medium rsu:text-gray-900">
+				<h4
+					className="rsu:font-medium"
+					style={{ color: theme?.colors.text || "#1F2937" }}
+				>
 					{t("mapping.unmappedColumns")} (
 					{unmappedColumns.filter((col) => !col.isMapped).length})
 				</h4>
 
 				{unmappedColumns.filter((col) => !col.isMapped).length === 0 ? (
-					<div className="rsu:rounded-lg rsu:bg-blue-50 rsu:p-4 rsu:text-center">
+					<div
+						className="rsu:p-4 rsu:text-center"
+						style={{
+							backgroundColor: `${
+								theme?.colors.success || "#10B981"
+							}10`,
+							borderRadius: theme?.borderRadius || "0.375rem",
+						}}
+					>
 						<svg
-							className="rsu:mx-auto rsu:h-12 rsu:w-12 rsu:text-blue-600"
+							className="rsu:mx-auto rsu:h-12 rsu:w-12"
 							fill="none"
 							stroke="currentColor"
 							viewBox="0 0 24 24"
 							aria-label="All fields mapped"
+							style={{
+								color: theme?.colors.success || "#10B981",
+							}}
 						>
 							<title>All fields mapped</title>
 							<path
@@ -453,7 +519,12 @@ export function ColumnMapping({
 								d="M5 13l4 4L19 7"
 							/>
 						</svg>
-						<p className="rsu:mt-2 rsu:font-medium rsu:text-blue-800">
+						<p
+							className="rsu:mt-2 rsu:font-medium"
+							style={{
+								color: theme?.colors.success || "#10B981",
+							}}
+						>
 							{t("mapping.allMapped")}
 						</p>
 					</div>
@@ -464,17 +535,41 @@ export function ColumnMapping({
 							.map((column) => (
 								<div
 									key={column.index}
-									className="rsu:flex rsu:items-center rsu:space-x-4 rsu:rounded-lg rsu:border rsu:border-gray-200 rsu:bg-white rsu:p-3"
+									className="rsu:flex rsu:flex-col rsu:items-start rsu:gap-3 rsu:border rsu:p-3 rsu:sm:flex-row rsu:sm:items-center rsu:sm:gap-4 rsu:sm:p-4"
+									style={{
+										backgroundColor:
+											theme?.colors.surface || "#FFFFFF",
+										borderColor:
+											theme?.colors.secondary ||
+											"#6B7280",
+										borderRadius:
+											theme?.borderRadius || "0.375rem",
+									}}
 								>
-									<div className="rsu:flex-1">
-										<div className="rsu:font-medium rsu:text-gray-900">
+									<div className="rsu:min-w-0 rsu:flex-1">
+										<div
+											className="rsu:font-medium"
+											style={{
+												color:
+													theme?.colors.text ||
+													"#1F2937",
+											}}
+										>
 											{column.header}
 										</div>
-										<div className="rsu:text-gray-500 rsu:text-sm">
+										<div
+											className="rsu:text-sm"
+											style={{
+												color:
+													theme?.colors
+														.textSecondary ||
+													"#6B7280",
+											}}
+										>
 											{t("mapping.selectField")}
 										</div>
 									</div>
-									<div className="rsu:min-w-48">
+									<div className="rsu:w-full rsu:flex-shrink-0 rsu:sm:w-48">
 										<SelectComponent
 											value={
 												mappingMap.get(column.index)
@@ -486,9 +581,23 @@ export function ColumnMapping({
 													e.target.value
 												)
 											}
-											className={`rsu:block rsu:w-full rsu:rounded-md rsu:border-gray-300 rsu:shadow-sm rsu:focus:border-blue-500 rsu:focus:ring-blue-500 ${
+											className={`rsu:block rsu:w-full rsu:border rsu:shadow-sm rsu:focus:outline-none rsu:focus:ring-2 ${
 												customStyles.select || ""
 											}`}
+											style={{
+												borderRadius:
+													theme?.borderRadius ||
+													"0.375rem",
+												borderColor:
+													theme?.colors.secondary ||
+													"#6B7280",
+												backgroundColor:
+													theme?.colors.surface ||
+													"#FFFFFF",
+												color:
+													theme?.colors.text ||
+													"#1F2937",
+											}}
 										>
 											<option value="">
 												{t("mapping.chooseField")}
@@ -511,12 +620,28 @@ export function ColumnMapping({
 			</div>
 
 			{/* Help Text */}
-			<div className="rsu:rounded-lg rsu:bg-gray-50 rsu:p-4">
-				<div className="rsu:text-gray-600 rsu:text-sm">
-					<p className="rsu:mb-2 rsu:font-medium">
+			<div
+				className="rsu:p-4"
+				style={{
+					backgroundColor: `${
+						theme?.colors.secondary || "#6B7280"
+					}05`,
+					borderRadius: theme?.borderRadius || "0.375rem",
+				}}
+			>
+				<div className="rsu:text-sm">
+					<p
+						className="rsu:mb-2 rsu:font-medium"
+						style={{ color: theme?.colors.text || "#1F2937" }}
+					>
 						{t("mapping.helpTitle")}
 					</p>
-					<ul className="rsu:space-y-1 rsu:text-sm">
+					<ul
+						className="rsu:space-y-1 rsu:text-sm"
+						style={{
+							color: theme?.colors.textSecondary || "#6B7280",
+						}}
+					>
 						<li>• {t("mapping.help1")}</li>
 						<li>• {t("mapping.help2")}</li>
 						<li>• {t("mapping.help3")}</li>

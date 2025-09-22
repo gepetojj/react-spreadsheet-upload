@@ -14,6 +14,7 @@ export interface ValidationProps extends CustomizableComponentProps {
 	onWarningClick?: (warning: ValidationResult["warnings"][0]) => void;
 	showDetails?: boolean;
 	i18n?: Partial<I18nConfig>;
+	// biome-ignore lint/suspicious/noExplicitAny: É necessário para o tipo any
 	theme?: any;
 }
 
@@ -24,9 +25,8 @@ export function Validation({
 	showDetails = true,
 	i18n,
 	className = "",
-	customComponents = {},
 	customStyles = {},
-	theme: _theme,
+	theme,
 }: ValidationProps) {
 	const { t } = useI18n(i18n?.locale as "pt-BR" | "en-US" | undefined);
 
@@ -77,9 +77,29 @@ export function Validation({
 				className,
 				customStyles.container
 			)}
+			style={
+				{
+					"--validation-error-color":
+						theme?.colors.error || "#EF4444",
+					"--validation-warning-color":
+						theme?.colors.warning || "#F59E0B",
+					"--validation-success-color":
+						theme?.colors.success || "#10B981",
+					"--validation-text-color": theme?.colors.text || "#1F2937",
+					"--validation-text-secondary-color":
+						theme?.colors.textSecondary || "#6B7280",
+					"--validation-surface-color":
+						theme?.colors.surface || "#FFFFFF",
+					"--validation-border-radius":
+						theme?.borderRadius || "0.375rem",
+				} as React.CSSProperties
+			}
 		>
 			<div className="rsu:flex rsu:items-center rsu:space-x-4">
-				<h3 className="rsu:font-semibold rsu:text-gray-900 rsu:text-lg">
+				<h3
+					className="rsu:font-semibold rsu:text-lg"
+					style={{ color: theme?.colors.text || "#1F2937" }}
+				>
 					{t("validation.title")}
 				</h3>
 

@@ -33,7 +33,7 @@ export function useFileParser(): UseFileParserReturn {
 									formatted: cell || "",
 									type: "string" as const,
 									isValid: true,
-								})),
+								}))
 							);
 
 							const spreadsheetData: SpreadsheetData = {
@@ -53,15 +53,13 @@ export function useFileParser(): UseFileParserReturn {
 					},
 					error: (error) => {
 						reject(
-							new Error(
-								`Erro ao processar CSV: ${error.message}`,
-							),
+							new Error(`Erro ao processar CSV: ${error.message}`)
 						);
 					},
 				});
 			});
 		},
-		[],
+		[]
 	);
 
 	const parseXLSX = useCallback(
@@ -86,6 +84,7 @@ export function useFileParser(): UseFileParserReturn {
 						const worksheet = workbook.Sheets[sheetName];
 						const jsonData = XLSX.utils.sheet_to_json(worksheet, {
 							header: 1,
+							// biome-ignore lint/suspicious/noExplicitAny: É necessário para o tipo any
 						}) as any[][];
 
 						if (jsonData.length === 0) {
@@ -122,7 +121,7 @@ export function useFileParser(): UseFileParserReturn {
 									type,
 									isValid: true,
 								};
-							}),
+							})
 						);
 
 						const spreadsheetData: SpreadsheetData = {
@@ -148,7 +147,7 @@ export function useFileParser(): UseFileParserReturn {
 				reader.readAsBinaryString(file);
 			});
 		},
-		[],
+		[]
 	);
 
 	const parseFile = useCallback(
@@ -163,11 +162,11 @@ export function useFileParser(): UseFileParserReturn {
 					return parseXLSX(file);
 				default:
 					throw new Error(
-						`Formato de arquivo não suportado: ${extension}`,
+						`Formato de arquivo não suportado: ${extension}`
 					);
 			}
 		},
-		[parseCSV, parseXLSX],
+		[parseCSV, parseXLSX]
 	);
 
 	return {

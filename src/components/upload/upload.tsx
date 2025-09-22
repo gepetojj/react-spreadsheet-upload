@@ -25,6 +25,7 @@ export function Upload({
 	loading = false,
 	error = null,
 	i18n,
+	theme,
 	className = "",
 	customComponents = {},
 	customStyles = {},
@@ -101,7 +102,7 @@ export function Upload({
 	return (
 		<div
 			className={clsx(
-				"rsu rsu:relative rsu:flex rsu:w-full rsu:items-center rsu:justify-center",
+				"rsu rsu:relative rsu:flex rsu:w-full rsu:items-center rsu:justify-center rsu:px-4",
 				className,
 				customStyles.container
 			)}
@@ -109,11 +110,11 @@ export function Upload({
 			<button
 				type="button"
 				className={clsx(
-					"rsu:w-full rsu:max-w-md rsu:cursor-pointer rsu:rounded-lg rsu:border-2 rsu:border-gray-300 rsu:border-dashed rsu:p-12 rsu:text-center rsu:transition-colors rsu:hover:border-gray-400 rsu:hover:bg-gray-50",
+					"rsu:w-full rsu:max-w-2xl rsu:cursor-pointer rsu:border-2 rsu:border-dashed rsu:p-6 rsu:text-center rsu:transition-all rsu:duration-300 rsu:hover:scale-[1.02] rsu:active:scale-[0.98] rsu:sm:p-8 rsu:lg:p-12",
 					{
-						"rsu:cursor-not-allowed rsu:opacity-50": disabled,
+						"rsu:cursor-not-allowed rsu:opacity-50 rsu:hover:scale-100":
+							disabled,
 						"rsu:pointer-events-none": loading,
-						"rsu:border-red-300 rsu:bg-red-50": error,
 					},
 					customStyles.button
 				)}
@@ -122,17 +123,47 @@ export function Upload({
 				onDrop={handleDrop}
 				onClick={handleBrowseClick}
 				tabIndex={disabled || loading ? -1 : 0}
+				style={{
+					borderRadius: theme?.borderRadius || "0.5rem",
+					borderColor: error
+						? theme?.colors.error || "#EF4444"
+						: theme?.colors.secondary || "#6B7280",
+					backgroundColor: error
+						? `${theme?.colors.error || "#EF4444"}10`
+						: theme?.colors.surface || "#FFFFFF",
+					color: theme?.colors.text || "#1F2937",
+					boxShadow:
+						theme?.shadows.sm || "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
+				}}
 			>
 				{loading ? (
 					<LoadingComponent className="rsu:flex rsu:flex-col rsu:items-center rsu:space-y-4">
-						<div className="rsu:h-8 rsu:w-8 rsu:animate-spin rsu:rounded-full rsu:border-blue-600 rsu:border-b-2"></div>
-						<p className="rsu:text-gray-600">
+						<div
+							className="rsu:h-8 rsu:w-8 rsu:animate-spin rsu:rounded-full rsu:border-2 rsu:border-transparent"
+							style={{
+								borderTopColor:
+									theme?.colors.primary || "#3B82F6",
+								borderRightColor:
+									theme?.colors.primary || "#3B82F6",
+							}}
+						></div>
+						<p
+							className="rsu:text-sm"
+							style={{
+								color: theme?.colors.textSecondary || "#6B7280",
+							}}
+						>
 							{t("upload.processing")}
 						</p>
 					</LoadingComponent>
 				) : (
-					<div className="rsu:space-y-4">
-						<div className="rsu:mx-auto rsu:h-12 rsu:w-12 rsu:text-gray-400">
+					<div className="rsu:space-y-4 rsu:sm:space-y-6">
+						<div
+							className="rsu:mx-auto rsu:h-10 rsu:w-10 rsu:sm:h-12 rsu:sm:w-12 rsu:lg:h-16 rsu:lg:w-16"
+							style={{
+								color: theme?.colors.secondary || "#6B7280",
+							}}
+						>
 							<svg
 								fill="none"
 								stroke="currentColor"
@@ -148,11 +179,23 @@ export function Upload({
 							</svg>
 						</div>
 
-						<div className="rsu:space-y-2">
-							<p className="rsu:font-medium rsu:text-gray-900 rsu:text-lg">
+						<div className="rsu:space-y-2 rsu:sm:space-y-3">
+							<p
+								className="rsu:font-medium rsu:text-base rsu:sm:text-lg rsu:lg:text-xl"
+								style={{
+									color: theme?.colors.text || "#1F2937",
+								}}
+							>
 								{t("upload.dragAndDrop")}
 							</p>
-							<p className="rsu:text-gray-500">
+							<p
+								className="rsu:text-sm rsu:sm:text-base"
+								style={{
+									color:
+										theme?.colors.textSecondary ||
+										"#6B7280",
+								}}
+							>
 								{t("upload.or")}
 							</p>
 						</div>
@@ -160,15 +203,29 @@ export function Upload({
 						<ButtonComponent
 							type="button"
 							className={clsx(
-								"rsu:inline-flex rsu:items-center rsu:rounded-md rsu:border rsu:border-transparent rsu:bg-blue-600 rsu:px-4 rsu:py-2 rsu:font-medium rsu:text-sm rsu:text-white rsu:hover:bg-blue-700 rsu:focus:outline-none rsu:focus:ring-2 rsu:focus:ring-blue-500 rsu:focus:ring-offset-2",
+								"rsu:inline-flex rsu:items-center rsu:border rsu:border-transparent rsu:px-4 rsu:py-2 rsu:font-medium rsu:text-sm rsu:transition-all rsu:duration-200 rsu:hover:scale-105 rsu:focus:outline-none rsu:focus:ring-2 rsu:focus:ring-offset-2 rsu:active:scale-95 rsu:sm:px-6 rsu:sm:py-3 rsu:sm:text-base",
 								customStyles.button
 							)}
 							disabled={disabled}
+							style={{
+								borderRadius: theme?.borderRadius || "0.375rem",
+								backgroundColor:
+									theme?.colors.primary || "#3B82F6",
+								color: theme?.colors.surface || "#FFFFFF",
+								boxShadow:
+									theme?.shadows.sm ||
+									"0 1px 2px 0 rgba(0, 0, 0, 0.05)",
+							}}
 						>
 							{t("upload.browse")}
 						</ButtonComponent>
 
-						<div className="rsu:space-y-1 rsu:text-gray-500 rsu:text-sm">
+						<div
+							className="rsu:space-y-1 rsu:text-sm"
+							style={{
+								color: theme?.colors.textSecondary || "#6B7280",
+							}}
+						>
 							<p>{t("upload.supportedFormats")}</p>
 							<p>
 								{t("upload.maxFileSize", {
@@ -180,8 +237,22 @@ export function Upload({
 				)}
 
 				{error && (
-					<div className="rsu:mt-4 rsu:rounded-md rsu:border rsu:border-red-300 rsu:bg-red-100 rsu:p-3">
-						<p className="rsu:text-red-700 rsu:text-sm">{error}</p>
+					<div
+						className="rsu:mt-4 rsu:border rsu:p-3"
+						style={{
+							borderRadius: theme?.borderRadius || "0.375rem",
+							borderColor: theme?.colors.error || "#EF4444",
+							backgroundColor: `${
+								theme?.colors.error || "#EF4444"
+							}10`,
+						}}
+					>
+						<p
+							className="rsu:text-sm"
+							style={{ color: theme?.colors.error || "#EF4444" }}
+						>
+							{error}
+						</p>
 					</div>
 				)}
 			</button>

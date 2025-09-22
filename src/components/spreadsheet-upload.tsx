@@ -24,7 +24,8 @@ import { Result } from "./result";
 import { Upload } from "./upload";
 import { Validation } from "./validation";
 
-export interface SpreadsheetUploadProps extends CustomizableComponentProps {
+export interface SpreadsheetUploadProps
+	extends Omit<CustomizableComponentProps, "theme"> {
 	onDataProcessed?: (
 		data: SpreadsheetData,
 		mappings: ColumnMappingType[],
@@ -44,7 +45,7 @@ export function SpreadsheetUpload({
 	onDataProcessed,
 	uploadOptions = {},
 	availableFields = [],
-	theme: _theme,
+	theme: userTheme,
 	i18n,
 	showSteps = true,
 	autoValidate = true,
@@ -56,6 +57,46 @@ export function SpreadsheetUpload({
 	const [currentStep, setCurrentStep] = useState<
 		"upload" | "preview" | "mapping" | "validation" | "editor" | "result"
 	>("upload");
+
+	// Default theme configuration
+	const defaultTheme: ThemeConfig = {
+		colors: {
+			primary: "#3B82F6",
+			secondary: "#6B7280",
+			success: "#10B981",
+			warning: "#F59E0B",
+			error: "#EF4444",
+			background: "#F9FAFB",
+			surface: "#FFFFFF",
+			text: "#1F2937",
+			textSecondary: "#6B7280",
+		},
+		spacing: {
+			xs: "0.25rem",
+			sm: "0.5rem",
+			md: "1rem",
+			lg: "1.5rem",
+			xl: "2rem",
+		},
+		borderRadius: "0.375rem",
+		shadows: {
+			sm: "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
+			md: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
+			lg: "0 10px 15px -3px rgba(0, 0, 0, 0.1)",
+		},
+	};
+
+	// Merge user theme with default theme
+	const theme = useMemo(() => {
+		if (!userTheme) return defaultTheme;
+
+		return {
+			colors: { ...defaultTheme.colors, ...userTheme.colors },
+			spacing: { ...defaultTheme.spacing, ...userTheme.spacing },
+			borderRadius: userTheme.borderRadius || defaultTheme.borderRadius,
+			shadows: { ...defaultTheme.shadows, ...userTheme.shadows },
+		};
+	}, [userTheme]);
 
 	const {
 		data,
@@ -339,7 +380,7 @@ export function SpreadsheetUpload({
 				canGoForward = !!data;
 				break;
 			case "preview":
-				canGoForward = columnMappings.length > 0;
+				canGoForward = true;
 				break;
 			case "mapping":
 				canGoForward = !!validationResult && allRequiredFieldsMapped;
@@ -485,6 +526,7 @@ export function SpreadsheetUpload({
 							loading={isLoading}
 							error={error}
 							i18n={i18n}
+							theme={theme}
 							customComponents={customComponents}
 							customStyles={customStyles}
 						/>
@@ -498,6 +540,7 @@ export function SpreadsheetUpload({
 						<Preview
 							data={data}
 							i18n={i18n}
+							theme={theme}
 							onCellClick={(row, column, value) => {
 								console.log("Cell clicked:", {
 									row,
@@ -522,6 +565,7 @@ export function SpreadsheetUpload({
 							availableFields={availableFields}
 							autoMapEnabled={autoMap}
 							i18n={i18n}
+							theme={theme}
 							customComponents={customComponents}
 							customStyles={customStyles}
 						/>
@@ -535,6 +579,7 @@ export function SpreadsheetUpload({
 						<Validation
 							validationResult={validationResult}
 							i18n={i18n}
+							theme={theme}
 							onErrorClick={(error) => {
 								console.log("Error clicked:", error);
 							}}
@@ -569,6 +614,7 @@ export function SpreadsheetUpload({
 							onCellEdit={(row, column, value) => {
 								updateCell(row, column, value);
 							}}
+							theme={theme}
 							customComponents={customComponents}
 							customStyles={customStyles}
 						/>
@@ -595,6 +641,7 @@ export function SpreadsheetUpload({
 									);
 								}
 							}}
+							theme={theme}
 							customComponents={customComponents}
 							customStyles={customStyles}
 						/>
@@ -609,69 +656,137 @@ export function SpreadsheetUpload({
 
 	const ButtonComponent = customComponents.Button || "button";
 
+	// Apply theme variables to CSS custom properties
+	const themeStyles = useMemo(
+		() =>
+			({
+				"--rsu-color-primary": theme.colors.primary,
+				"--rsu-color-secondary": theme.colors.secondary,
+				"--rsu-color-success": theme.colors.success,
+				"--rsu-color-warning": theme.colors.warning,
+				"--rsu-color-error": theme.colors.error,
+				"--rsu-color-background": theme.colors.background,
+				"--rsu-color-surface": theme.colors.surface,
+				"--rsu-color-text": theme.colors.text,
+				"--rsu-color-text-secondary": theme.colors.textSecondary,
+				"--rsu-spacing-xs": theme.spacing.xs,
+				"--rsu-spacing-sm": theme.spacing.sm,
+				"--rsu-spacing-md": theme.spacing.md,
+				"--rsu-spacing-lg": theme.spacing.lg,
+				"--rsu-spacing-xl": theme.spacing.xl,
+				"--rsu-border-radius": theme.borderRadius,
+				"--rsu-shadow-sm": theme.shadows.sm,
+				"--rsu-shadow-md": theme.shadows.md,
+				"--rsu-shadow-lg": theme.shadows.lg,
+			} as React.CSSProperties),
+		[theme]
+	);
+
 	return (
 		<div
 			className={clsx(
-				"rsu rsu:mx-auto rsu:w-full rsu:max-w-6xl rsu:p-6",
+				"rsu rsu:mx-auto rsu:w-full rsu:max-w-7xl rsu:p-4 rsu:sm:p-6 rsu:lg:p-8",
 				className,
 				customStyles.container
 			)}
+			style={{
+				...themeStyles,
+				backgroundColor: theme.colors.background,
+				color: theme.colors.text,
+				borderRadius: theme.borderRadius,
+				minHeight: "600px",
+			}}
 		>
 			{showSteps && (
-				<div className="rsu:mb-8 rsu:w-full">
-					<nav className="rsu:flex rsu:w-full rsu:space-x-8">
-						{steps.map((step: (typeof steps)[0], index: number) => (
-							<button
-								type="button"
-								key={step.key}
-								onClick={() => {
-									if (step.accessible) {
-										setCurrentStep(
-											step.key as
-												| "upload"
-												| "preview"
-												| "mapping"
-												| "validation"
-												| "editor"
-												| "result"
-										);
-									}
-								}}
-								disabled={!step.accessible}
-								className={`rsu:flex rsu:items-center rsu:space-x-2 rsu:border-b-2 rsu:px-3 rsu:py-2 rsu:font-medium rsu:text-sm rsu:transition-colors ${
-									!step.accessible
-										? "rsu:cursor-not-allowed rsu:opacity-50"
-										: currentStep === step.key
-										? "rsu:border-blue-600 rsu:text-blue-600"
-										: step.completed
-										? "rsu:border-green-600 rsu:text-green-600 rsu:hover:text-green-700"
-										: "rsu:border-transparent rsu:text-gray-500 rsu:hover:text-gray-700"
-								}
-                `}
-							>
-								<div
-									className={`rsu:flex rsu:h-6 rsu:w-6 rsu:items-center rsu:justify-center rsu:rounded-full rsu:font-bold rsu:text-xs ${
+				<div className="rsu:mb-6 rsu:w-full rsu:sm:mb-8">
+					<nav className="rsu:flex rsu:w-full rsu:flex-wrap rsu:gap-2 rsu:overflow-x-auto rsu:overflow-y-hidden rsu:sm:flex-nowrap rsu:sm:gap-0 rsu:sm:space-x-6 rsu:lg:space-x-8">
+						{steps.map((step: (typeof steps)[0], index: number) => {
+							const StepButton =
+								customComponents.Button || "button";
+
+							return (
+								<StepButton
+									type="button"
+									key={step.key}
+									onClick={() => {
+										if (step.accessible) {
+											setCurrentStep(
+												step.key as
+													| "upload"
+													| "preview"
+													| "mapping"
+													| "validation"
+													| "editor"
+													| "result"
+											);
+										}
+									}}
+									disabled={!step.accessible}
+									className={clsx(
+										"rsu:flex rsu:min-h-[44px] rsu:flex-shrink-0 rsu:items-center rsu:space-x-1 rsu:whitespace-nowrap rsu:border-b-2 rsu:px-2 rsu:py-2 rsu:font-medium rsu:text-xs rsu:transition-all rsu:duration-200 rsu:sm:space-x-2 rsu:sm:px-3 rsu:sm:py-3 rsu:sm:text-sm",
 										!step.accessible
-											? "rsu:bg-gray-50 rsu:text-gray-400"
+											? "rsu:cursor-not-allowed rsu:opacity-50"
 											: currentStep === step.key
-											? "rsu:bg-blue-100 rsu:text-blue-600"
+											? "rsu:scale-105 rsu:text-current"
 											: step.completed
-											? "rsu:bg-green-100 rsu:text-green-600"
-											: "rsu:bg-gray-100 rsu:text-gray-500"
-									}
-                `}
+											? "rsu:hover:scale-102 rsu:hover:opacity-80"
+											: "rsu:border-transparent rsu:hover:scale-102 rsu:hover:opacity-80",
+										customStyles.button
+									)}
+									style={{
+										borderBottomColor: !step.accessible
+											? theme.colors.secondary
+											: currentStep === step.key
+											? theme.colors.primary
+											: step.completed
+											? theme.colors.success
+											: "transparent",
+										color: !step.accessible
+											? theme.colors.textSecondary
+											: currentStep === step.key
+											? theme.colors.primary
+											: step.completed
+											? theme.colors.success
+											: theme.colors.textSecondary,
+									}}
 								>
-									{step.completed ? "✓" : index + 1}
-								</div>
-								<span>{step.label}</span>
-							</button>
-						))}
+									<div
+										className={clsx(
+											"rsu:flex rsu:h-5 rsu:w-5 rsu:items-center rsu:justify-center rsu:rounded-full rsu:font-bold rsu:text-xs rsu:transition-all rsu:duration-200 rsu:sm:h-6 rsu:sm:w-6"
+										)}
+										style={{
+											backgroundColor: !step.accessible
+												? `${theme.colors.secondary}20`
+												: currentStep === step.key
+												? `${theme.colors.primary}20`
+												: step.completed
+												? `${theme.colors.success}20`
+												: `${theme.colors.secondary}20`,
+											color: !step.accessible
+												? theme.colors.textSecondary
+												: currentStep === step.key
+												? theme.colors.primary
+												: step.completed
+												? theme.colors.success
+												: theme.colors.textSecondary,
+										}}
+									>
+										{step.completed ? "✓" : index + 1}
+									</div>
+									<span className="rsu:hidden rsu:sm:inline">
+										{step.label}
+									</span>
+								</StepButton>
+							);
+						})}
 					</nav>
 				</div>
 			)}
 
-			<div className="rsu:flex rsu:min-h-[500px] rsu:w-full rsu:items-center rsu:justify-center">
-				{renderStepContent()}
+			<div className="rsu:flex rsu:min-h-[400px] rsu:w-full rsu:items-start rsu:justify-center rsu:sm:min-h-[500px]">
+				<div className="rsu:w-full rsu:max-w-none">
+					{renderStepContent()}
+				</div>
 			</div>
 
 			{data && (
@@ -686,14 +801,34 @@ export function SpreadsheetUpload({
 					<div className="rsu:space-x-2">
 						<ButtonComponent
 							onClick={handleClear}
-							className="rsu:inline-flex rsu:items-center rsu:rounded-md rsu:border rsu:border-gray-300 rsu:bg-white rsu:px-3 rsu:py-2 rsu:font-medium rsu:text-gray-700 rsu:text-sm rsu:hover:bg-gray-50"
+							className={clsx(
+								"rsu:inline-flex rsu:items-center rsu:border rsu:px-3 rsu:py-2 rsu:font-medium rsu:text-sm rsu:transition-colors",
+								customStyles.button
+							)}
+							style={{
+								borderRadius: theme.borderRadius,
+								borderColor: theme.colors.secondary,
+								backgroundColor: theme.colors.surface,
+								color: theme.colors.text,
+								boxShadow: theme.shadows.sm,
+							}}
 						>
 							{t("actions.clear")}
 						</ButtonComponent>
 						{currentStep !== "upload" && (
 							<ButtonComponent
 								onClick={() => setCurrentStep("upload")}
-								className="rsu:inline-flex rsu:items-center rsu:rounded-md rsu:border rsu:border-gray-300 rsu:bg-white rsu:px-3 rsu:py-2 rsu:font-medium rsu:text-gray-700 rsu:text-sm rsu:hover:bg-gray-50"
+								className={clsx(
+									"rsu:inline-flex rsu:items-center rsu:border rsu:px-3 rsu:py-2 rsu:font-medium rsu:text-sm rsu:transition-colors",
+									customStyles.button
+								)}
+								style={{
+									borderRadius: theme.borderRadius,
+									borderColor: theme.colors.primary,
+									backgroundColor: theme.colors.primary,
+									color: theme.colors.surface,
+									boxShadow: theme.shadows.sm,
+								}}
 							>
 								{t("actions.back")}
 							</ButtonComponent>

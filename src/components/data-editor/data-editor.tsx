@@ -39,6 +39,7 @@ export function DataEditor({
 	showColumnHeaders = true,
 	validationResult,
 	i18n,
+	theme,
 	className = "",
 	customComponents = {},
 	customStyles = {},
@@ -289,15 +290,12 @@ export function DataEditor({
 	const getCellClassName = useCallback(
 		(cell: CellData, row: number, column: number) => {
 			const baseClasses =
-				"rsu:px-3 rsu:py-2 rsu:text-sm rsu:text-gray-900 rsu:border-r rsu:border-b rsu:border-gray-200";
-			const editableClasses = editable
-				? "rsu:cursor-pointer rsu:hover:bg-blue-50"
-				: "";
-			const invalidClasses =
-				cell.isValid === false ? "rsu:bg-red-50 rsu:text-red-700" : "";
+				"rsu:px-3 rsu:py-2 rsu:text-sm rsu:border-r rsu:border-b";
+			const editableClasses = editable ? "rsu:cursor-pointer" : "";
+			const invalidClasses = cell.isValid === false ? "" : "";
 			const editingClasses =
 				editingCell?.row === row && editingCell?.column === column
-					? "rsu:bg-blue-100"
+					? ""
 					: "";
 
 			return `${baseClasses} ${editableClasses} ${invalidClasses} ${editingClasses} ${
@@ -307,21 +305,52 @@ export function DataEditor({
 		[editable, editingCell, customStyles.cell]
 	);
 
+	const getCellStyle = useCallback(
+		(cell: CellData, row: number, column: number) => {
+			const isEditing =
+				editingCell?.row === row && editingCell?.column === column;
+			const isInvalid = cell.isValid === false;
+
+			return {
+				color: isInvalid
+					? theme?.colors.error || "#EF4444"
+					: theme?.colors.text || "#1F2937",
+				backgroundColor: isEditing
+					? `${theme?.colors.primary || "#3B82F6"}20`
+					: isInvalid
+					? `${theme?.colors.error || "#EF4444"}10`
+					: editable
+					? theme?.colors.surface || "#FFFFFF"
+					: `${theme?.colors.secondary || "#6B7280"}05`,
+				borderColor: theme?.colors.secondary || "#6B7280",
+			};
+		},
+		[editingCell, theme, editable]
+	);
+
 	return (
 		<div
 			className={clsx(
-				"rsu rsu:w-full rsu:space-y-4",
+				"rsu rsu:w-full rsu:space-y-4 rsu:sm:space-y-6",
 				className,
 				customStyles.container
 			)}
 		>
-			<div className="rsu:flex rsu:items-center rsu:justify-between">
+			<div className="rsu:flex rsu:flex-col rsu:items-start rsu:justify-between rsu:gap-4 rsu:sm:flex-row rsu:sm:items-center">
 				<div className="rsu:flex rsu:items-center rsu:space-x-4">
-					<h3 className="rsu:font-semibold rsu:text-gray-900 rsu:text-lg">
+					<h3
+						className="rsu:font-semibold rsu:text-lg"
+						style={{ color: theme?.colors.text || "#1F2937" }}
+					>
 						{t("editor.title")}
 					</h3>
 					<div className="rsu:flex rsu:items-center rsu:space-x-2">
-						<span className="rsu:font-medium rsu:text-gray-700 rsu:text-sm">
+						<span
+							className="rsu:font-medium rsu:text-sm"
+							style={{
+								color: theme?.colors.textSecondary || "#6B7280",
+							}}
+						>
 							{t("editor.filterLabel")}
 						</span>
 						<SelectComponent
@@ -352,17 +381,49 @@ export function DataEditor({
 				)}
 			</div>
 
-			<div className="rsu:max-h-96 rsu:overflow-auto rsu:rounded-lg rsu:border rsu:border-gray-200">
+			<div
+				className="rsu:max-h-[300px] rsu:overflow-auto rsu:rounded-lg rsu:border rsu:sm:max-h-96"
+				style={{
+					borderRadius: theme?.borderRadius || "0.375rem",
+					borderColor: theme?.colors.secondary || "#6B7280",
+				}}
+			>
 				<TableComponent
-					className={`rsu:min-w-full rsu:divide-y rsu:divide-gray-200 ${
+					className={`rsu:min-w-full rsu:divide-y ${
 						customStyles.table || ""
 					}`}
+					style={{
+						borderCollapse: "separate",
+						borderSpacing: 0,
+					}}
 				>
 					{showColumnHeaders && (
-						<thead className="rsu:sticky rsu:top-0 rsu:z-10 rsu:bg-gray-50">
+						<thead
+							className="rsu:sticky rsu:top-0 rsu:z-10"
+							style={{
+								backgroundColor:
+									theme?.colors.surface || "#FFFFFF",
+							}}
+						>
 							<tr>
 								{showRowNumbers && (
-									<th className="rsu:border-gray-200 rsu:border-r rsu:border-b rsu:bg-gray-100 rsu:px-3 rsu:py-2 rsu:text-left rsu:font-medium rsu:text-gray-500 rsu:text-xs rsu:uppercase rsu:tracking-wider">
+									<th
+										className={`rsu:border-r rsu:border-b rsu:px-3 rsu:py-2 rsu:text-left rsu:font-medium rsu:text-xs rsu:uppercase rsu:tracking-wider ${
+											customStyles.header || ""
+										}`}
+										style={{
+											backgroundColor: `${
+												theme?.colors.secondary ||
+												"#6B7280"
+											}10`,
+											borderColor:
+												theme?.colors.secondary ||
+												"#6B7280",
+											color:
+												theme?.colors.textSecondary ||
+												"#6B7280",
+										}}
+									>
 										#
 									</th>
 								)}
@@ -370,9 +431,22 @@ export function DataEditor({
 									(header: string, index: number) => (
 										<th
 											key={`header-${index}-${header}`}
-											className={`rsu:border-gray-200 rsu:border-r rsu:border-b rsu:bg-gray-100 rsu:px-3 rsu:py-2 rsu:text-left rsu:font-medium rsu:text-gray-500 rsu:text-xs rsu:uppercase rsu:tracking-wider ${
+											className={`rsu:border-r rsu:border-b rsu:px-3 rsu:py-2 rsu:text-left rsu:font-medium rsu:text-xs rsu:uppercase rsu:tracking-wider ${
 												customStyles.header || ""
 											}`}
+											style={{
+												backgroundColor: `${
+													theme?.colors.secondary ||
+													"#6B7280"
+												}10`,
+												borderColor:
+													theme?.colors.secondary ||
+													"#6B7280",
+												color:
+													theme?.colors
+														.textSecondary ||
+													"#6B7280",
+											}}
 										>
 											{header}
 										</th>
@@ -381,7 +455,13 @@ export function DataEditor({
 							</tr>
 						</thead>
 					)}
-					<tbody className="rsu:divide-y rsu:divide-gray-200 rsu:bg-white">
+					<tbody
+						className="rsu:divide-y"
+						style={{
+							backgroundColor: theme?.colors.surface || "#FFFFFF",
+							borderColor: theme?.colors.secondary || "#6B7280",
+						}}
+					>
 						{displayData.rows.map(
 							(row: CellData[], displayRowIndex: number) => {
 								// Get original row index
@@ -397,10 +477,27 @@ export function DataEditor({
 										key={`row-${originalRowIndex}-${displayRowIndex}-${row
 											.map((cell) => cell.value)
 											.join("-")}`}
-										className="rsu:hover:bg-gray-50"
+										className="rsu:transition-colors"
 									>
 										{showRowNumbers && (
-											<td className="rsu:border-gray-200 rsu:border-r rsu:border-b rsu:bg-gray-50 rsu:px-3 rsu:py-2 rsu:font-medium rsu:text-gray-500 rsu:text-sm">
+											<td
+												className="rsu:border-r rsu:border-b rsu:px-3 rsu:py-2 rsu:font-medium rsu:text-sm"
+												style={{
+													backgroundColor: `${
+														theme?.colors
+															.secondary ||
+														"#6B7280"
+													}05`,
+													borderColor:
+														theme?.colors
+															.secondary ||
+														"#6B7280",
+													color:
+														theme?.colors
+															.textSecondary ||
+														"#6B7280",
+												}}
+											>
 												{originalRowIndex + 1}
 											</td>
 										)}
@@ -412,6 +509,11 @@ export function DataEditor({
 												<td
 													key={`cell-${originalRowIndex}-${columnIndex}-${cell.value}`}
 													className={getCellClassName(
+														cell,
+														originalRowIndex,
+														columnIndex
+													)}
+													style={getCellStyle(
 														cell,
 														originalRowIndex,
 														columnIndex

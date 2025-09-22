@@ -142,6 +142,7 @@ export interface AvailableField {
 }
 
 export interface CustomizableComponentProps extends ComponentProps {
+	theme?: ThemeConfig;
 	customComponents?: {
 		Button?: React.ComponentType<
 			React.ButtonHTMLAttributes<HTMLButtonElement>
