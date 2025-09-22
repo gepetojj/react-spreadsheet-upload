@@ -1,6 +1,6 @@
 {
 	"name": "react-spreadsheet-upload",
-	"version": "1.0.4",
+	"version": "1.0.5",
 	"description": "Simple React component to upload spreadsheets",
 	"author": "João Pedro <contato.gepetojj@gmail.com>",
 	"license": "MIT",
