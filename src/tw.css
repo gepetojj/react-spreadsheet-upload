@@ -20,14 +20,4 @@
 	.rsu select {
 		@apply rsu:outline-none rsu:focus:ring-2 rsu:focus:ring-blue-500;
 	}
-
-	@keyframes rsu-spin {
-		to {
-			transform: rotate(360deg);
-		}
-	}
-
-	.rsu:animate-spin {
-		animation: rsu-spin 1s linear infinite;
-	}
 }
