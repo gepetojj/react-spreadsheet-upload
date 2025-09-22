@@ -1,7 +1,3 @@
-/**
- * Core types for the React Spreadsheet Upload library
- */
-
 export interface CellData {
 	value: string | number | boolean | null;
 	formatted?: string;
@@ -42,6 +38,7 @@ export interface SpreadsheetData {
 	fileName: string;
 	fileSize: number;
 	lastModified: Date;
+	parsed?: Record<string, unknown>[];
 }
 
 export interface ValidationResult {

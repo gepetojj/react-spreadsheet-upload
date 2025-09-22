@@ -79,9 +79,6 @@ export const Default: Story = {
 		) => {
 			console.log("Dados processados:", { data, mappings, validation });
 		},
-		onExport: (data: SpreadsheetData, mappings: ColumnMapping[]) => {
-			console.log("Exportando dados:", { data, mappings });
-		},
 	},
 };
 

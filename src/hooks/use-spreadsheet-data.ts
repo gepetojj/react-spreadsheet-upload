@@ -78,10 +78,23 @@ export function useSpreadsheetData(): UseSpreadsheetDataReturn {
 	const [isLoading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 
-	// Transform data to JSON format
 	const transformedData = useMemo(() => {
 		if (!data || columnMappings.length === 0) return null;
 		return transformDataToJSON(data, columnMappings);
+	}, [data, columnMappings]);
+
+	const updatedData = useMemo(() => {
+		if (!data) return null;
+		if (columnMappings.length === 0) {
+			// If no mappings, remove parsed data
+			const { parsed: _, ...dataWithoutParsed } = data;
+			return dataWithoutParsed;
+		}
+		// Add parsed data to SpreadsheetData
+		return {
+			...data,
+			parsed: transformDataToJSON(data, columnMappings),
+		};
 	}, [data, columnMappings]);
 
 	const updateCell = useCallback(
@@ -145,7 +158,7 @@ export function useSpreadsheetData(): UseSpreadsheetDataReturn {
 	}, []);
 
 	return {
-		data,
+		data: updatedData,
 		validationResult,
 		columnMappings,
 		isLoading,
